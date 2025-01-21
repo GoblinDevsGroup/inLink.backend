@@ -1,0 +1,27 @@
+package org.example.adds.WebSocket;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+
+@CrossOrigin
+@Configuration
+@EnableWebSocketMessageBroker
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/queue","/topic","/panel","/visitor");
+        config.setApplicationDestinationPrefixes("/app");
+    }
+
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/websocket-connection")
+                .setAllowedOrigins("http://localhost:9091")
+                .withSockJS();
+    }
+}
