@@ -12,13 +12,12 @@ import java.util.List;
 public interface AdvMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "status", constant = "PENDING")
+    @Mapping(target = "status", constant = "INACTIVE")
     @Mapping(target = "createdAt", expression = "java(LocalDateTime.now())")
     @Mapping(target = "visitorNumber", constant = "0")
     @Mapping(target = "user", source = "user")
     @Mapping(target = "advLink", source = "advLink")
-    @Mapping(target = "expiresAt", source = "expiresAt")
-    Advertisement toEntity(AdvLink request, Users user, String advLink, LocalDateTime expiresAt);
+    Advertisement toEntity(AdvLink request, Users user, String advLink);
 
     AdvResponse toResponse(Advertisement advertisement);
     List<AdvResponse> advertisementListToAdvResponseList(List<Advertisement> advertisements);

@@ -20,7 +20,7 @@ public class AdvertisementController {
     private final VisitorsService visitorsService;
 
     @PostMapping("/create-link/{id}")
-    public ResponseEntity<?> createAdv(@PathVariable UUID id,
+    public ResponseEntity<AdvLinkResponse> createAdv(@PathVariable UUID id,
                                        @RequestBody AdvLink request) {
         return ResponseEntity.ok(advertisementService.createAdv(id, request));
     }

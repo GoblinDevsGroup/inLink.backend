@@ -20,7 +20,7 @@ public class AdvertisementService {
     private final AdvertisementRepo advertisementRepo;
     private final UsersRepo usersRepo;
     private final AdvMapper mapper;
-    private final static String baseLink = "http://localhost:9091/api/adv/get/";
+    private final static String baseLink = "https://sculpin-golden-bluejay.ngrok-free.app/api/adv/get/";
 
     public AdvLinkResponse createAdv(UUID id, AdvLink request) {
 
@@ -28,9 +28,8 @@ public class AdvertisementService {
                 .orElseThrow(() -> new NoSuchElementException("user not found"));
 
         String advLink = generateAdvLink();
-        LocalDateTime expiresAt = LocalDateTime.now().plusMonths(1);
 
-        Advertisement adv = mapper.toEntity(request, user, advLink, expiresAt);
+        Advertisement adv = mapper.toEntity(request, user, advLink);
 
         UUID advId = advertisementRepo.save(adv).getId();
 
@@ -53,9 +52,9 @@ public class AdvertisementService {
 
         Advertisement adv = getAdvLinkBySubLink(subLink);
 
-        if (adv.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new LinkExpiredException("Link expired");
-        }
+//        if (adv.getExpiresAt().isBefore(LocalDateTime.now())) {
+//            throw new LinkExpiredException("Link expired");
+//        }
 
         return adv.getMainLink();
     }
@@ -71,9 +70,9 @@ public class AdvertisementService {
                 .orElseThrow(() -> new NoSuchElementException("link not found"));
 
         String advLink = adv.getAdvLink();
-        if (adv.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new LinkExpiredException("Link expired");
-        }
+//        if (adv.getExpiresAt().isBefore(LocalDateTime.now())) {
+//            throw new LinkExpiredException("Link expired");
+//        }
 
         return QrCodeGenerator.generateQRCodeImageAsByteArray(advLink);
     }

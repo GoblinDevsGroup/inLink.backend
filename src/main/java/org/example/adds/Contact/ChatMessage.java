@@ -7,8 +7,6 @@ import java.util.UUID;
 
 @Data
 public class ChatMessage {
-    private UUID senderId;
-    private UUID recipientId;
+    private UUID userId;
     private String content;
-    private LocalDateTime timestamp;
 }

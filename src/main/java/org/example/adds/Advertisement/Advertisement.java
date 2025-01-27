@@ -35,9 +35,6 @@ public class Advertisement implements Serializable {
     private int VisitorNumber;
 
     @Column(nullable = false)
-    private LocalDateTime expiresAt;
-
-    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
@@ -47,7 +44,4 @@ public class Advertisement implements Serializable {
 
     @JoinColumn
     private LocalDateTime updatedAt;
-
-//    @OneToMany(mappedBy = "advertisement", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Visitors> visitors;
 }

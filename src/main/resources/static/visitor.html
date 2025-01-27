@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>WebSocket Test</title>
+    <title>visitor Test</title>
     <script src="/webjars/sockjs-client/1.0.2/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
 </head>
@@ -11,7 +11,7 @@
 
 <script>
     // WebSocket orqali ulanish
-    const socket = new SockJS(`${window.location.origin}/websocket-connection`);
+     const socket = new SockJS('http://localhost:9091/websocket-connection');
     const stompClient = Stomp.over(socket);
 
     stompClient.connect({}, () => {

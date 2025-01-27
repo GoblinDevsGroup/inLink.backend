@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -34,18 +35,29 @@ public class Security {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(SWAGGER_URLS).permitAll()
-                        .requestMatchers("/api/auth/signup",
+                        .requestMatchers("/wss/**",
+                                "/api/auth/delete/**",
+                                "/**",
+                                "/actuator/**",
+                                "/ws/**",
+                                "/chat/**",
+                                "/websocket-connection/**",
+                                "/favicon.ico",
+                                "/api/auth/signup",
                                 "/api/auth/login",
                                 "/api/auth/verify",
                                 "/api/auth/forgot/verify",
                                 "/api/auth/forgot",
                                 "/api/auth/reset",
-                                "/api/adv/get/**","/**").permitAll()
+                                "/api/adv/get/**","/api/chat/send-to-admin").permitAll()
                         .requestMatchers("/api/adv/create-link/**",
                                 "/api/adv/qr-code/**",
                                 "/api/adv/get-by/**",
                                 "/api/adv/delete",
                                 "/api/adv/delete-view").hasRole("USER") // only users
+                        .requestMatchers("/api/chat/send-to-user",
+                                "/api/chat/view-one/**",
+                                "/api/chat/get-all-chat").hasRole("ADMIN") // only admin
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)

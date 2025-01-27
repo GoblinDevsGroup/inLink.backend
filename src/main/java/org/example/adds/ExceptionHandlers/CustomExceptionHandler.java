@@ -27,4 +27,10 @@ public class CustomExceptionHandler {
         log.error(ex.getMessage());
         return ResponseEntity.status(404).body(ex.getMessage());
     }
+
+    @ExceptionHandler(AllReadyExists.class)
+    public ResponseEntity<?> handle(AllReadyExists ex, WebRequest request) {
+        log.error(ex.getMessage());
+        return ResponseEntity.status(409).body(ex.getMessage());
+    }
 }
