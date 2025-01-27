@@ -34,6 +34,7 @@ public class WalletService {
         BigDecimal currentBalance = wallet.getBalance();
         BigDecimal updatedBalance = currentBalance.subtract(WalletService.linkPrice);
         wallet.setBalance(updatedBalance);
+        //todo: transfer charged amount into
         walletRepo.save(wallet);
 
         transactionService.saveTransaction(wallet, linkPrice, advTitle);

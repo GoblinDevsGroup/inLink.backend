@@ -3,10 +3,7 @@ package org.example.adds.Users;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import org.example.adds.Auth.SetNewPassword;
-import org.example.adds.Auth.SignUpRequest;
-import org.example.adds.Auth.SigningRequest;
-import org.example.adds.Auth.VerifyForgotPassword;
+import org.example.adds.Auth.*;
 import org.example.adds.DraftUser.DraftUserRepo;
 import org.example.adds.DraftUser.DraftUsers;
 import org.example.adds.ExceptionHandlers.AllReadyExists;
@@ -20,10 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Service
@@ -35,6 +29,7 @@ public class UsersService {
     private final SmsSender smsSender;
     private final DraftUserRepo draftUserRepo;
     private final WalletRepo walletRepo;
+    private static final int validPasswordLength = 6;
 
     @Transactional
     public void save(DraftUsers draftUser) {
@@ -52,11 +47,9 @@ public class UsersService {
     }
 
     private void createWallet(Users user) {
-        if (walletRepo.existsByUser(user)){
+        if (walletRepo.existsByUser(user)) {
             throw new AllReadyExists("wallet already exists");
-        }
-        else
-        {
+        } else {
             Wallet wallet = new Wallet();
             wallet.setUser(user);
             wallet.setBalance(BigDecimal.valueOf(5000.00));
@@ -74,9 +67,10 @@ public class UsersService {
     @Transactional
     public String saveDraftUser(SignUpRequest request) {
 
-        if (!isPhoneValid(request.getPhone())) {
-            throw new IllegalArgumentException("Invalid phone number format");
+        if (!isPhoneValid(request.getPhone()) && !validPassword(request.getPassword())) {
+            throw new IllegalArgumentException("Invalid phone or password format");
         }
+
 
         DraftUsers user = new DraftUsers();
 
@@ -94,13 +88,16 @@ public class UsersService {
         return "SMS code sent";
     }
 
+    private boolean validPassword(String password) {
+        return password.length() >= validPasswordLength;
+    }
+
     private String generateSmsCode() {
-        return String.format("%04d", new Random().nextInt(10000)); // Always generates a 4-digit number
+        return String.format("%06d", new Random().nextInt(1000000));
     }
 
     @Transactional
     public String verifyPhone(SigningRequest request) {
-        // Find draft user by phone or throw exception if not found
         DraftUsers draftUser = draftUserRepo.findByPhone(request.getPhone())
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
 
@@ -109,12 +106,10 @@ public class UsersService {
 
         if (isPhoneAndCodeValid) {
             if (LocalDateTime.now().isBefore(draftUser.getExpiresAt())) {
-                // Save the new user and remove the draft
-                save(draftUser); // Ensure this method is implemented properly
+                save(draftUser);
                 draftUserRepo.delete(draftUser);
                 return "New user saved";
             } else {
-                // If the code is expired, resend the SMS code
                 return resendSmsCode(draftUser, request.getPhone());
             }
         } else {
@@ -146,18 +141,17 @@ public class UsersService {
 
     public String activatePhone(VerifyForgotPassword dto) {
         DraftUsers draftUser = draftUserRepo.findByPhone(dto.phone())
-                .orElseThrow(()->new NoSuchElementException("data not found"));
+                .orElseThrow(() -> new NoSuchElementException("data not found"));
 
         if (draftUser.getPhone().equals(dto.phone()) &&
                 Objects.equals(draftUser.getSmsCode(), dto.smsCode())
-        && LocalDateTime.now().isBefore(draftUser.getExpiresAt())) {
+                && LocalDateTime.now().isBefore(draftUser.getExpiresAt())) {
 
             draftUser.setSmsCode(null);
             draftUserRepo.save(draftUser);
             return "phone activated";
 
-        } else if (draftUser.getPhone().equals(dto.phone()) &&
-                Objects.equals(draftUser.getSmsCode(), dto.smsCode())
+        } else if (Objects.equals(draftUser.getSmsCode(), dto.smsCode())
                 && LocalDateTime.now().isAfter(draftUser.getExpiresAt())) {
 
             return resendSmsCode(draftUser, dto.phone());
@@ -171,29 +165,30 @@ public class UsersService {
     public String setNewPassword(SetNewPassword dto) {
         DraftUsers draftUser =
                 draftUserRepo.findByPhone(dto.phone())
-                        .orElseThrow(()->new NoSuchElementException("user not found"));
+                        .orElseThrow(() -> new NoSuchElementException("user not found"));
+
+
 
         if (draftUser.getPhone().equals(dto.phone())
-                && draftUser.getSmsCode() == null){
+                && draftUser.getSmsCode() == null) {
 
             Users user = usersRepo.findByPhone(dto.phone())
-                    .orElseThrow(()->new NoSuchElementException("user not found"));
+                    .orElseThrow(() -> new NoSuchElementException("user not found"));
 
             user.setPassword(passwordEncoder.encode(dto.newPassword()));
             draftUserRepo.delete(draftUser);
             usersRepo.save(user);
             return "updated successfully";
-        }
-        else
+        } else
             throw new BadCredentialsException("inactive phone");
     }
 
     public Users findById(UUID recipientId) {
         return usersRepo.findById(recipientId)
-                .orElseThrow(()->new NoSuchElementException("user not found"));
+                .orElseThrow(() -> new NoSuchElementException("user not found"));
     }
 
-    private String resendSmsCode(DraftUsers draftUser, String phone){
+    private String resendSmsCode(DraftUsers draftUser, String phone) {
         String smsCode = generateSmsCode();
         smsSender.sendSms(phone, smsCode);
         draftUser.setExpiresAt(LocalDateTime.now().plusMinutes(2));
@@ -204,7 +199,28 @@ public class UsersService {
 
     public String delete(String phone) {
         draftUserRepo.delete(draftUserRepo.findByPhone(phone)
-                .orElseThrow(()->new NoSuchElementException("not found")));
+                .orElseThrow(() -> new NoSuchElementException("not found")));
         return "deleted";
+    }
+
+    public Response resendSmsCodeToUser(Phone phone) {
+        DraftUsers draftUser = draftUserRepo.findByPhone(phone.phone())
+                .orElseThrow(() -> new NoSuchElementException("user with " + phone.phone() + " not found"));
+        String s = resendSmsCode(draftUser, draftUser.getPhone());
+        return new Response("sent successfully", true);
+    }
+
+    @Transactional
+    public Response deleteByPhone(String phone) {
+        Users user = usersRepo.findByPhone(phone)
+                .orElseThrow(()->new NoSuchElementException("user not found"));
+
+        Wallet byUser = walletRepo.findByUser(user)
+                .orElseThrow(()->new NoSuchElementException("wallet not found"));
+
+        walletRepo.delete(byUser);
+
+        usersRepo.delete(user);
+        return new Response("deleted", true);
     }
 }

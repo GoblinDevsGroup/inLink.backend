@@ -161,6 +161,7 @@ public class AdvertisementService {
 
             if (result) {
                 adv.setStatus(AdStatus.ACTIVE);
+                adv.setUpdatedAt(LocalDateTime.now());
                 advertisementRepo.save(adv);
                 walletService.chargeFromWallet(user, adv.getTitle());
                 return new Response("activated successfully", true);
@@ -171,6 +172,7 @@ public class AdvertisementService {
 
         if (request.status().equals(AdStatus.INACTIVE)) {
             adv.setStatus(AdStatus.INACTIVE);
+            adv.setUpdatedAt(LocalDateTime.now());
             //todo: method to not charge from a user wallet for this advertisement since the user is making it inactive
             advertisementRepo.save(adv);
             return new Response("inactivated successfully", true);

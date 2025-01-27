@@ -36,7 +36,8 @@ public class Security {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(SWAGGER_URLS).permitAll()
                         .requestMatchers("/wss/**",
-                                "/api/auth/delete/**",
+                                "/api/auth/delete/**", // delete drafted user for test
+                                "/api/user/delete/**", // delete actual user for test
                                 "/**",
                                 "/actuator/**",
                                 "/ws/**",
@@ -49,7 +50,9 @@ public class Security {
                                 "/api/auth/forgot/verify",
                                 "/api/auth/forgot",
                                 "/api/auth/reset",
-                                "/api/adv/get/**","/api/chat/send-to-admin").permitAll()
+                                "/api/auth/resend-sms",
+                                "/api/adv/get/**","/api/chat/send-to-admin" // this endpoints have to be authenticated
+                        ).permitAll()
                         .requestMatchers("/api/adv/create-link/**",
                                 "/api/adv/qr-code/**",
                                 "/api/adv/get-by/**",
