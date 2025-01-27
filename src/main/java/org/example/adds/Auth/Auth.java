@@ -8,6 +8,8 @@ import lombok.Data;
 import org.example.adds.Response;
 import org.example.adds.Security.JwtUtil;
 import org.example.adds.Users.*;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,6 +17,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -27,8 +31,13 @@ public class Auth {
 
     @PostMapping("/signup")
     public ResponseEntity<Response> signup(@Valid @RequestBody SignUpRequest request) {
+        try {
             String response = usersService.saveDraftUser(request);
             return ResponseEntity.ok(new Response(response,true));
+        } catch (DataIntegrityViolationException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new Response("Phone number already exists.", false));
+        }
     }
 
     @PostMapping("/verify")
@@ -70,8 +79,13 @@ public class Auth {
     }
 
     @PatchMapping("/reset")
-    public ResponseEntity<Users> resetPassword(@RequestBody SetNewPassword dto){
-        return ResponseEntity.ok(usersService.setNewPassword(dto));
+    public ResponseEntity<Response> resetPassword(@RequestBody SetNewPassword dto){
+        try {
+            String response = usersService.setNewPassword(dto);
+            return ResponseEntity.ok(new Response(response, true));
+        }catch (Exception ex){
+            return ResponseEntity.status(400).body(new Response(ex.getMessage(), false));
+        }
     }
 
     @DeleteMapping("delete/{phone}")

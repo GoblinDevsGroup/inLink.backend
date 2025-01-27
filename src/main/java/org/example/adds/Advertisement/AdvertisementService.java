@@ -1,12 +1,21 @@
 package org.example.adds.Advertisement;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import org.apache.coyote.BadRequestException;
 import org.example.adds.ExceptionHandlers.LinkExpiredException;
 import org.example.adds.QRcode.QrCodeGenerator;
+import org.example.adds.Response;
 import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersRepo;
+import org.example.adds.Wallet.TransactionRepo;
+import org.example.adds.Wallet.TransactionService;
+import org.example.adds.Wallet.Wallet;
+import org.example.adds.Wallet.WalletService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -20,6 +29,9 @@ public class AdvertisementService {
     private final AdvertisementRepo advertisementRepo;
     private final UsersRepo usersRepo;
     private final AdvMapper mapper;
+    private final WalletService walletService;
+    private final TransactionService transactionService;
+
     private final static String baseLink = "https://sculpin-golden-bluejay.ngrok-free.app/api/adv/get/";
 
     public AdvLinkResponse createAdv(UUID id, AdvLink request) {
@@ -80,7 +92,7 @@ public class AdvertisementService {
     public List<AdvResponse> getByUserId(UUID userId) {
 
         Users user = usersRepo.findById(userId)
-                .orElseThrow(()->new NoSuchElementException("user not found"));
+                .orElseThrow(() -> new NoSuchElementException("user not found"));
 
         List<Advertisement> adv = advertisementRepo.findByUser(user);
         adv.sort(Comparator.comparing(Advertisement::getCreatedAt).reversed());
@@ -90,41 +102,81 @@ public class AdvertisementService {
 
     public AdvResponse editAdv(EditAdv request) {
         Advertisement adv = advertisementRepo.findById(request.advId())
-                .orElseThrow(()->new NoSuchElementException("adv not found"));
+                .orElseThrow(() -> new NoSuchElementException("adv not found"));
 
-        if (adv.getUser().getId().equals(request.userId())){
+        if (adv.getUser().getId().equals(request.userId())) {
             adv.setTitle(request.title());
             adv.setUpdatedAt(LocalDateTime.now());
             advertisementRepo.save(adv);
 
             return mapper.toResponse(adv);
-        }
-        else
+        } else
             throw new RuntimeException("permission denied");
     }
 
     public void deleteAdv(DeleteRequest request) {
         Advertisement adv = advertisementRepo.findById(request.advId())
-                .orElseThrow(()->new NoSuchElementException("adv not found"));
+                .orElseThrow(() -> new NoSuchElementException("adv not found"));
 
-        if (adv.getUser().getId().equals(request.userId())){
+        if (adv.getUser().getId().equals(request.userId())) {
             advertisementRepo.delete(adv);
         }
     }
 
-    public AdvDeleteView deleteView(DeleteRequest request) {
+    public AdvDeleteView deleteView(DeleteRequest request) throws BadRequestException {
         Advertisement adv = advertisementRepo.findById(request.advId())
-                .orElseThrow(()->new NoSuchElementException("adv not found"));
+                .orElseThrow(() -> new NoSuchElementException("adv not found"));
 
-        if (adv.getUser().getId().equals(request.userId())){
+        if (adv.getUser().getId().equals(request.userId())) {
             return new AdvDeleteView(
                     adv.getId(),
                     adv.getTitle(),
                     adv.getAdvLink(),
                     adv.getMainLink()
             );
-        }
-        else
-            throw new RuntimeException("permission denied");
+        } else
+            throw new BadRequestException("permission denied");
     }
+
+    @Transactional
+    public Response updateStatus(UpdateStatus request) {
+        if (request == null) {
+            return new Response("Invalid request", false);
+        }
+
+        Advertisement adv = advertisementRepo.findById(request.advId())
+                .orElseThrow(() -> new NoSuchElementException("Advertisement not found"));
+
+
+        Users user = usersRepo.findById(request.userId())
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
+
+
+        if (!adv.getUser().equals(user)) {
+            return new Response("Permission denied", false);
+        }
+
+        if (request.status().equals(AdStatus.ACTIVE)) {
+            boolean result = walletService.checkUserWallet(user);
+
+            if (result) {
+                adv.setStatus(AdStatus.ACTIVE);
+                advertisementRepo.save(adv);
+                walletService.chargeFromWallet(user, adv.getTitle());
+                return new Response("activated successfully", true);
+            } else {
+                return new Response("Charging failed. Please check your balance", false);
+            }
+        }
+
+        if (request.status().equals(AdStatus.INACTIVE)) {
+            adv.setStatus(AdStatus.INACTIVE);
+            //todo: method to not charge from a user wallet for this advertisement since the user is making it inactive
+            advertisementRepo.save(adv);
+            return new Response("inactivated successfully", true);
+        }
+
+        return new Response("Invalid status value", false);
+    }
+
 }

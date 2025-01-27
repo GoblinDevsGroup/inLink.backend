@@ -10,6 +10,7 @@ import org.example.adds.Auth.VerifyForgotPassword;
 import org.example.adds.DraftUser.DraftUserRepo;
 import org.example.adds.DraftUser.DraftUsers;
 import org.example.adds.ExceptionHandlers.AllReadyExists;
+import org.example.adds.Response;
 import org.example.adds.Sms.SmsSender;
 import org.example.adds.Wallet.Wallet;
 import org.example.adds.Wallet.WalletRepo;
@@ -167,7 +168,7 @@ public class UsersService {
     }
 
     @Transactional
-    public Users setNewPassword(SetNewPassword dto) {
+    public String setNewPassword(SetNewPassword dto) {
         DraftUsers draftUser =
                 draftUserRepo.findByPhone(dto.phone())
                         .orElseThrow(()->new NoSuchElementException("user not found"));
@@ -180,10 +181,11 @@ public class UsersService {
 
             user.setPassword(passwordEncoder.encode(dto.newPassword()));
             draftUserRepo.delete(draftUser);
-            return usersRepo.save(user);
+            usersRepo.save(user);
+            return "updated successfully";
         }
         else
-            throw new RuntimeException("inactive phone");
+            throw new BadCredentialsException("inactive phone");
     }
 
     public Users findById(UUID recipientId) {

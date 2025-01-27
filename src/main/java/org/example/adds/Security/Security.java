@@ -54,7 +54,8 @@ public class Security {
                                 "/api/adv/qr-code/**",
                                 "/api/adv/get-by/**",
                                 "/api/adv/delete",
-                                "/api/adv/delete-view").hasRole("USER") // only users
+                                "/api/adv/delete-view",
+                                "/api/adv/update-status").hasRole("USER") // only users
                         .requestMatchers("/api/chat/send-to-user",
                                 "/api/chat/view-one/**",
                                 "/api/chat/get-all-chat").hasRole("ADMIN") // only admin

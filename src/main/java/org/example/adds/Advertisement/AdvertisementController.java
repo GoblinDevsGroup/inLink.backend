@@ -2,6 +2,8 @@ package org.example.adds.Advertisement;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.BadRequestException;
+import org.example.adds.Response;
 import org.example.adds.Visitors.VisitorsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -9,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @RestController
@@ -25,6 +29,15 @@ public class AdvertisementController {
         return ResponseEntity.ok(advertisementService.createAdv(id, request));
     }
 
+    @PatchMapping("/update-status")
+    public ResponseEntity<Response> updateStatus(@RequestBody UpdateStatus request){
+        try{
+            return ResponseEntity.ok(advertisementService.updateStatus(request));
+        }catch (NoSuchElementException ex){
+            return ResponseEntity.status(404).body(new Response(ex.getMessage(), false));
+        }
+    }
+
     @GetMapping("/get/{link}")
     public RedirectView redirectToMainLink(@PathVariable String link, HttpServletRequest request) {
         /*
@@ -39,7 +52,7 @@ public class AdvertisementController {
     }
 
     @GetMapping("/qr-code/{id}")
-    public ResponseEntity<?> getQrCode(@PathVariable UUID id) throws Exception {
+    public ResponseEntity<byte[]> getQrCode(@PathVariable UUID id) throws Exception {
         byte[] qrCodeImage = advertisementService.generateQrCode(id);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.IMAGE_PNG)
@@ -48,23 +61,31 @@ public class AdvertisementController {
     }
 
     @GetMapping("/get-by/{userId}")
-    public ResponseEntity<?> getByUserId(@PathVariable UUID userId){
+    public ResponseEntity<List<AdvResponse>> getByUserId(@PathVariable UUID userId){
         return ResponseEntity.ok(advertisementService.getByUserId(userId));
     }
 
     @PatchMapping("/edit") //edit by adv id
-    public ResponseEntity<?> editAdv(@RequestBody EditAdv request){
+    public ResponseEntity<AdvResponse> editAdv(@RequestBody EditAdv request){
         return ResponseEntity.ok(advertisementService.editAdv(request));
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteAdv(@RequestBody DeleteRequest request){
-        advertisementService.deleteAdv(request);
-        return ResponseEntity.status(200).body("");
+    public ResponseEntity<Response> deleteAdv(@RequestBody DeleteRequest request){
+        try {
+            advertisementService.deleteAdv(request);
+            return ResponseEntity.status(200).body(new Response("deleted successfully", true));
+        }catch (NoSuchElementException ex){
+            return ResponseEntity.status(404).body(new Response(ex.getMessage(), false));
+        }
     }
 
     @GetMapping("/delete-view") // get method for deleting advertisement data
-    public ResponseEntity<?> deleteView(@RequestBody DeleteRequest request){
-        return ResponseEntity.ok(advertisementService.deleteView(request));
+    public ResponseEntity<AdvDeleteView> deleteView(@RequestBody DeleteRequest request){
+        try {
+            return ResponseEntity.ok(advertisementService.deleteView(request));
+        } catch (BadRequestException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

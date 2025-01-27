@@ -3,6 +3,9 @@ package org.example.adds.ExceptionHandlers;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.adds.Response;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,5 +35,11 @@ public class CustomExceptionHandler {
     public ResponseEntity<?> handle(AllReadyExists ex, WebRequest request) {
         log.error(ex.getMessage());
         return ResponseEntity.status(409).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Response> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new Response("The phone number is already in use. Please use a different number.", false));
     }
 }

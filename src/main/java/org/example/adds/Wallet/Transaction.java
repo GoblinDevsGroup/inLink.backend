@@ -27,11 +27,14 @@ public class Transaction implements Serializable {
     @Column(nullable = false)
     private Valuate valuate;
 
-    @Column(nullable = false)
+    @Column
     private String description;
 
     @Column(nullable = false)
     private BigDecimal amount;
+
+    @Column(nullable = false)
+    private TransactionState transactionState;
 
     @Column(nullable = false)
     private LocalDateTime transactionTime;

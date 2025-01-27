@@ -8,11 +8,12 @@ import org.mapstruct.Mapping;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Mapper(componentModel = "spring",imports = java.time.LocalDateTime.class)
+@Mapper(componentModel = "spring",imports = {java.time.LocalDateTime.class,
+        org.example.adds.Advertisement.AdStatus.class})
 public interface AdvMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "status", constant = "INACTIVE")
+    @Mapping(target = "status", expression = "java(org.example.adds.Advertisement.AdStatus.INACTIVE)")
     @Mapping(target = "createdAt", expression = "java(LocalDateTime.now())")
     @Mapping(target = "visitorNumber", constant = "0")
     @Mapping(target = "user", source = "user")
