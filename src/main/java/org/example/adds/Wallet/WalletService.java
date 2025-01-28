@@ -3,14 +3,19 @@ package org.example.adds.Wallet;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.example.adds.Payment.PaymentCheck;
+import org.example.adds.Payment.PaymentCheckRepo;
 import org.example.adds.Response;
 import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersRepo;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -18,6 +23,8 @@ public class WalletService {
 
     private final WalletRepo walletRepo;
     private final TransactionService transactionService;
+    private final UsersRepo usersRepo;
+    private final PaymentCheckRepo paymentCheckRepo;
 
     public static final BigDecimal linkPrice = BigDecimal.valueOf(1000.00);
 
@@ -77,5 +84,27 @@ public class WalletService {
 
         //todo: implement sms notification to a user about transaction happened
         return new Response("updated user wallet", true);
+    }
+
+    public Response sendPaymentCheck(UUID userId, MultipartFile file) {
+        Users user = usersRepo.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("user not found"));
+
+        try {
+            byte[] fileData = file.getBytes();
+            PaymentCheck check = new PaymentCheck();
+            check.setFilename(file.getOriginalFilename());
+            check.setFileType(file.getContentType());
+            check.setFile(fileData);
+            check.setUploadedBy(user);
+            check.setUploadDate(LocalDateTime.now());
+            check.setUpdatedDate(LocalDateTime.now());
+            paymentCheckRepo.save(check);
+            //todo : send notification to admin
+
+            return new Response("file sent successfully", true);
+        } catch (IOException e) {
+            return new Response(e.getMessage(), false);
+        }
     }
 }
