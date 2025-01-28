@@ -14,14 +14,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/queue", "/topic", "/panel", "/visitor");
+        config.enableSimpleBroker("/queue", "/topic", "/panel", "/visitor","/notify");
         config.setApplicationDestinationPrefixes("/app");
         config.setUserDestinationPrefix("/user");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/websocket-connection", "/chat")
+        registry.addEndpoint("/websocket-connection", "/chat","notification")
                 .setAllowedOrigins("/**", "https://sculpin-golden-bluejay.ngrok-free.app", "http://localhost:9000")
                 .withSockJS();
     }
