@@ -19,7 +19,19 @@ public class TransactionService {
         transaction.setTransactionTime(LocalDateTime.now());
         transaction.setValuate(Valuate.USZ);
         transaction.setType(TransactionType.WITHDRAWAL);
-        transaction.setDescription("an amount "+amount+" UZS withdrawal for " + advTitle);
+        transaction.setDescription("an amount "+amount+" UZS charged for " + advTitle);
+        transaction.setTransactionState(TransactionState.SUCCESS);
+        transactionRepo.save(transaction);
+    }
+
+    public void saveTransactionForWithdrawal(Wallet wallet, BigDecimal amount) {
+        Transaction transaction = new Transaction();
+        transaction.setWallet(wallet);
+        transaction.setAmount(amount);
+        transaction.setTransactionTime(LocalDateTime.now());
+        transaction.setValuate(Valuate.USZ);
+        transaction.setType(TransactionType.WITHDRAWAL);
+        transaction.setDescription("an amount "+amount+" UZS charged for today");
         transaction.setTransactionState(TransactionState.SUCCESS);
         transactionRepo.save(transaction);
     }
