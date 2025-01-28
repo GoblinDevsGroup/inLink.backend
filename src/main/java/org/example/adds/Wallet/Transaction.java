@@ -2,6 +2,7 @@ package org.example.adds.Wallet;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.context.annotation.Lazy;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -18,7 +19,7 @@ public class Transaction implements Serializable {
     private UUID id;
 
     @JoinColumn(nullable = false)
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Wallet wallet;
 
     @Column(nullable = false)

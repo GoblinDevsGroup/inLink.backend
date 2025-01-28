@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -78,4 +80,5 @@ public class WalletService {
         //todo: implement sms notification to a user about transaction happened
         return new Response("updated user wallet", true);
     }
+
 }
