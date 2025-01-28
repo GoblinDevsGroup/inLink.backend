@@ -12,14 +12,26 @@ public class TransactionService {
 
     private final TransactionRepo transactionRepo;
 
-    public void saveTransaction(Wallet wallet, BigDecimal amount, String advTitle) {
+    public void saveTransactionForWithdrawal(Wallet wallet, BigDecimal amount, String advTitle) {
         Transaction transaction = new Transaction();
         transaction.setWallet(wallet);
         transaction.setAmount(amount);
         transaction.setTransactionTime(LocalDateTime.now());
         transaction.setValuate(Valuate.USZ);
         transaction.setType(TransactionType.WITHDRAWAL);
-        transaction.setDescription("amount withdrawal for " + advTitle);
+        transaction.setDescription("an amount "+amount+" UZS withdrawal for " + advTitle);
+        transaction.setTransactionState(TransactionState.SUCCESS);
+        transactionRepo.save(transaction);
+    }
+
+    public void saveTransactionForDepositing(Wallet wallet, BigDecimal amount) {
+        Transaction transaction = new Transaction();
+        transaction.setAmount(amount);
+        transaction.setWallet(wallet);
+        transaction.setType(TransactionType.DEPOSIT);
+        transaction.setValuate(Valuate.USZ);
+        transaction.setDescription("an amount of "+amount+" UZS has been credited");
+        transaction.setTransactionTime(LocalDateTime.now());
         transaction.setTransactionState(TransactionState.SUCCESS);
         transactionRepo.save(transaction);
     }

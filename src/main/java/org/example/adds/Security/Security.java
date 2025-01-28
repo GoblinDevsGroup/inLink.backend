@@ -61,7 +61,8 @@ public class Security {
                                 "/api/adv/update-status").hasRole("USER") // only users
                         .requestMatchers("/api/chat/send-to-user",
                                 "/api/chat/view-one/**",
-                                "/api/chat/get-all-chat").hasRole("ADMIN") // only admin
+                                "/api/chat/get-all-chat",
+                                "/api/wallet/deposit").hasRole("ADMIN") // only admin
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
