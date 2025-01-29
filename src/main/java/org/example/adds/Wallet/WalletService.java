@@ -3,6 +3,7 @@ package org.example.adds.Wallet;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.example.adds.Notification.NotificationService;
 import org.example.adds.Payment.PaymentCheck;
 import org.example.adds.Payment.PaymentCheckRepo;
 import org.example.adds.Response;
@@ -25,6 +26,7 @@ public class WalletService {
     private final TransactionService transactionService;
     private final UsersRepo usersRepo;
     private final PaymentCheckRepo paymentCheckRepo;
+    private final NotificationService notificationService;
 
     public static final BigDecimal linkPrice = BigDecimal.valueOf(1000.00);
 
@@ -52,7 +54,9 @@ public class WalletService {
         /*logging transactions when charging is happened from a user wallet*/
         transactionService.saveTransactionForWithdrawal(wallet, linkPrice, advTitle);
 
-        //todo: implement sms notification to a user about transaction happened
+        /* notification to a user about transaction happened */
+        notificationService.sendNotificationToUser(user.getId(),
+                linkPrice + " UZS has been charged from your wallet for " + advTitle);
     }
 
     @SneakyThrows
@@ -67,13 +71,15 @@ public class WalletService {
         /*logging transactions when charging is happened from a user wallet*/
         transactionService.saveTransactionForWithdrawal(wallet, amount);
 
-        //todo: implement sms notification to a user about transaction happened
+        /* notification to a user about transaction happened */
+        notificationService.sendNotificationToUser(wallet.getUser().getId(),
+                amount + " UZS has been charged from your wallet");
     }
 
     @Transactional
     public Response fillUserWallet(DepositToWallet request) {
         Wallet wallet = walletRepo.findById(request.walletId())
-                .orElseThrow(()->new NoSuchElementException("wallet not found"));
+                .orElseThrow(() -> new NoSuchElementException("wallet not found"));
         BigDecimal currentBalance = wallet.getBalance();
         BigDecimal updatedBalance = currentBalance.add(request.amount());
         wallet.setBalance(updatedBalance);
@@ -82,7 +88,11 @@ public class WalletService {
 
         transactionService.saveTransactionForDepositing(wallet, request.amount());
 
-        //todo: implement sms notification to a user about transaction happened
+        /* notification to a user about transaction happened */
+        notificationService.sendNotificationToUser(wallet.getUser().getId(),
+                request.amount() + " UZS has been credited to your wallet\n " +
+                        "your current balance is " + updatedBalance);
+
         return new Response("updated user wallet", true);
     }
 
@@ -100,7 +110,13 @@ public class WalletService {
             check.setUploadDate(LocalDateTime.now());
             check.setUpdatedDate(LocalDateTime.now());
             paymentCheckRepo.save(check);
-            //todo : send notification to admin
+
+            UUID adminId = usersRepo.findByUserRole(Users.UserRole.ROLE_ADMIN).getId();
+
+            /* notification to admin about a file sent by a user */
+            notificationService.sendNotificationToUser(adminId,
+                    user.getFullName()+" has sent a file " + file.getOriginalFilename() +
+                            "\n please check it");
 
             return new Response("file sent successfully", true);
         } catch (IOException e) {
