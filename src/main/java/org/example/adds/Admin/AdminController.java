@@ -21,9 +21,7 @@ import java.util.UUID;
 @RequestMapping("api/admin")
 @AllArgsConstructor
 public class AdminController {
-   // private final AdminService adminService;
     private final UsersService usersService;
-   // private final WalletService walletService;
     private final TransactionService transactionService;
 
     @GetMapping

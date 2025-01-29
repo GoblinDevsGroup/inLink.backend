@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -97,7 +96,7 @@ public class WalletService {
         return new Response("updated user wallet", true);
     }
 
-// <<<<<<< dev/Kamol
+    // <<<<<<< dev/Kamol
 // =======
     public Response sendPaymentCheck(UUID userId, MultipartFile file) {
         Users user = usersRepo.findById(userId)
@@ -118,7 +117,7 @@ public class WalletService {
 
             /* notification to admin about a file sent by a user */
             notificationService.sendNotificationToUser(adminId,
-                    user.getFullName()+" has sent a file " + file.getOriginalFilename() +
+                    user.getFullName() + " has sent a file " + file.getOriginalFilename() +
                             "\n please check it");
 
             return new Response("file sent successfully", true);
