@@ -17,7 +17,7 @@ public class PaymentCheck implements Serializable {
     @GeneratedValue
     private UUID id;
 
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Users uploadedBy;
 
