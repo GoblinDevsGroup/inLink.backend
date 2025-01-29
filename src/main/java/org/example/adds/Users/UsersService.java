@@ -29,6 +29,7 @@ public class UsersService {
     private final SmsSender smsSender;
     private final DraftUserRepo draftUserRepo;
     private final WalletRepo walletRepo;
+    private final UsersMapper usersMapper;
     private static final int validPasswordLength = 6;
 
     @Transactional
@@ -168,7 +169,6 @@ public class UsersService {
                         .orElseThrow(() -> new NoSuchElementException("user not found"));
 
 
-
         if (draftUser.getPhone().equals(dto.phone())
                 && draftUser.getSmsCode() == null) {
 
@@ -213,14 +213,24 @@ public class UsersService {
     @Transactional
     public Response deleteByPhone(String phone) {
         Users user = usersRepo.findByPhone(phone)
-                .orElseThrow(()->new NoSuchElementException("user not found"));
+                .orElseThrow(() -> new NoSuchElementException("user not found"));
 
         Wallet byUser = walletRepo.findByUser(user)
-                .orElseThrow(()->new NoSuchElementException("wallet not found"));
+                .orElseThrow(() -> new NoSuchElementException("wallet not found"));
 
         walletRepo.delete(byUser);
 
         usersRepo.delete(user);
         return new Response("deleted", true);
+    }
+
+    public List<Users> getAllUsers() {
+        return this.usersRepo.findAll();
+    }
+
+    public UsersDto getUserById(UUID userId) {
+        return this.usersMapper.toDto(
+                usersRepo.findById(userId)
+                        .orElseThrow(() -> new NoSuchElementException("user not found")));
     }
 }

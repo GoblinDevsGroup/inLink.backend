@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -46,5 +48,8 @@ public class TransactionService {
         transaction.setTransactionTime(LocalDateTime.now());
         transaction.setTransactionState(TransactionState.SUCCESS);
         transactionRepo.save(transaction);
+    }
+    public List<Transaction> getAllTransactionWithWalletId(UUID walletId) {
+        return this.transactionRepo.findAllByWallet_Id(walletId);
     }
 }

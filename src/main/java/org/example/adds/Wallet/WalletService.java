@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -96,6 +97,8 @@ public class WalletService {
         return new Response("updated user wallet", true);
     }
 
+// <<<<<<< dev/Kamol
+// =======
     public Response sendPaymentCheck(UUID userId, MultipartFile file) {
         Users user = usersRepo.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("user not found"));
@@ -123,4 +126,5 @@ public class WalletService {
             return new Response(e.getMessage(), false);
         }
     }
+// >>>>>>> main
 }
