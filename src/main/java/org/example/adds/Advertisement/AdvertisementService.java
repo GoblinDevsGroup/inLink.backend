@@ -2,20 +2,17 @@ package org.example.adds.Advertisement;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import org.apache.coyote.BadRequestException;
-import org.example.adds.ExceptionHandlers.LinkExpiredException;
 import org.example.adds.QRcode.QrCodeGenerator;
 import org.example.adds.Response;
 import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersRepo;
-import org.example.adds.Wallet.TransactionRepo;
 import org.example.adds.Wallet.TransactionService;
-import org.example.adds.Wallet.Wallet;
 import org.example.adds.Wallet.WalletService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -89,16 +86,26 @@ public class AdvertisementService {
         return QrCodeGenerator.generateQRCodeImageAsByteArray(advLink);
     }
 
-    public List<AdvResponse> getByUserId(UUID userId) {
+//        public List<AdvResponse> getByUserId(UUID userId, Pageable pageable) {
+//
+//            Users user = usersRepo.findById(userId)
+//                    .orElseThrow(() -> new NoSuchElementException("user not found"));
+//
+//            List<Advertisement> adv = advertisementRepo.findByUser(user);
+//            adv.sort(Comparator.comparing(Advertisement::getCreatedAt).reversed());
+//
+//            return mapper.advertisementListToAdvResponseList(adv);
+//        }
 
+    public Page<AdvResponse> getByUserId(UUID userId, Pageable pageable) {
         Users user = usersRepo.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("user not found"));
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
 
-        List<Advertisement> adv = advertisementRepo.findByUser(user);
-        adv.sort(Comparator.comparing(Advertisement::getCreatedAt).reversed());
+        Page<Advertisement> advPage = advertisementRepo.findByUser(user, pageable);
 
-        return mapper.advertisementListToAdvResponseList(adv);
+        return advPage.map(mapper::toResponse);
     }
+
 
     public AdvResponse editAdv(EditAdv request) {
         Advertisement adv = advertisementRepo.findById(request.advId())

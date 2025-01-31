@@ -38,11 +38,12 @@ public class Security {
                         .requestMatchers("/wss/**",
                                 "/api/auth/delete/**", // delete drafted user for test
                                 "/api/user/delete/**", // delete actual user for test
-                                "/**",
+//                                "/**",
                                 "/actuator/**",
                                 "/ws/**",
-                                "/chat/**",
+                                "/chat/**", // this has to be private for authenticated users
                                 "/websocket-connection/**",
+                                "/notification",
                                 "/favicon.ico",
                                 "/api/auth/signup",
                                 "/api/auth/login",

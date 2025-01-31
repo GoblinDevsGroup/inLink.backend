@@ -21,7 +21,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/websocket-connection", "/chat","notification")
+        registry.addEndpoint("/websocket-connection", "/chat","/notification")
                 .setAllowedOrigins("/**", "https://sculpin-golden-bluejay.ngrok-free.app", "http://localhost:9000")
                 .withSockJS();
     }

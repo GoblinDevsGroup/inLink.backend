@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.example.adds.Response;
 import org.example.adds.Visitors.VisitorsService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -61,9 +65,12 @@ public class AdvertisementController {
     }
 
     @GetMapping("/get-by/{userId}")
-    public ResponseEntity<List<AdvResponse>> getByUserId(@PathVariable UUID userId){
-        return ResponseEntity.ok(advertisementService.getByUserId(userId));
+    public ResponseEntity<Page<AdvResponse>> getByUserId(
+            @PathVariable UUID userId,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(advertisementService.getByUserId(userId, pageable));
     }
+
 
     @PatchMapping("/edit") //edit by adv id
     public ResponseEntity<AdvResponse> editAdv(@RequestBody EditAdv request){
