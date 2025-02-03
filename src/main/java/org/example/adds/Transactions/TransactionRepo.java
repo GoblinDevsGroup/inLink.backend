@@ -1,5 +1,6 @@
-package org.example.adds.Wallet;
+package org.example.adds.Transactions;
 
+import org.example.adds.Transactions.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

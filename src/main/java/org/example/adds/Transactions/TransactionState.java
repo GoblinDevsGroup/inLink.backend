@@ -1,4 +1,4 @@
-package org.example.adds.Wallet;
+package org.example.adds.Transactions;
 
 public enum TransactionState {
     FAILED,

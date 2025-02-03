@@ -15,8 +15,8 @@ import io.swagger.v3.oas.annotations.servers.Server;
                         name = "Islom",
                         email = "turgunpolatovislom5@gmail.com"
                 ),
-                description = "OpenApi documentation for InLink project",
-                title = "OpenApi specification",
+                description = "OpenApi documentation for inLink project",
+                title = "inLink API doc",
                 version = "1.0",
                 license = @License(
                         name = "License name",

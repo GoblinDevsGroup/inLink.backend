@@ -1,13 +1,11 @@
 package org.example.adds.Admin;
 
 import lombok.AllArgsConstructor;
-import org.example.adds.Response;
 import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersDto;
 import org.example.adds.Users.UsersService;
-import org.example.adds.Wallet.Transaction;
-import org.example.adds.Wallet.TransactionService;
-import org.example.adds.Wallet.WalletService;
+import org.example.adds.Transactions.Transaction;
+import org.example.adds.Transactions.TransactionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

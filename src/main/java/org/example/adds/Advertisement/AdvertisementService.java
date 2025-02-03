@@ -7,15 +7,13 @@ import org.example.adds.QRcode.QrCodeGenerator;
 import org.example.adds.Response;
 import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersRepo;
-import org.example.adds.Wallet.TransactionService;
+import org.example.adds.Transactions.TransactionService;
 import org.example.adds.Wallet.WalletService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 

@@ -34,39 +34,41 @@ public class Security {
         http.csrf(AbstractHttpConfigurer::disable);
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers(SWAGGER_URLS).permitAll()
-                        .requestMatchers("/wss/**",
-                                "/api/auth/delete/**", // delete drafted user for test
-                                "/api/user/delete/**", // delete actual user for test
-//                                "/**",
-                                "/actuator/**",
-                                "/ws/**",
-                                "/chat/**", // this has to be private for authenticated users
-                                "/websocket-connection/**",
-                                "/notification",
-                                "/favicon.ico",
-                                "/api/auth/signup",
-                                "/api/auth/login",
-                                "/api/auth/verify",
-                                "/api/auth/forgot/verify",
-                                "/api/auth/forgot",
-                                "/api/auth/reset",
-                                "/api/auth/resend-sms",
-                                "/api/adv/get/**","/api/chat/send-to-admin" // this endpoints have to be authenticated
-                        ).permitAll()
-                        .requestMatchers("/api/adv/create-link/**",
-                                "/api/adv/qr-code/**",
-                                "/api/adv/get-by/**",
-                                "/api/adv/delete",
-                                "/api/adv/delete-view",
-                                "/api/adv/update-status").hasRole("USER") // only users
-                        .requestMatchers("/api/chat/send-to-user",
-                                "/api/chat/view-one/**",
-                                "/api/chat/get-all-chat",
-                                "/api/wallet/deposit",
-                                "/api/admin/getUser/transactions",
-                                "/api/admin/getUser").hasRole("ADMIN") // only admin
-                        .anyRequest().authenticated()
+                                .requestMatchers(SWAGGER_URLS).permitAll()
+                                .requestMatchers("/wss/**",
+                                        "/api/auth/delete/**", // delete drafted user for test
+                                        "/api/user/delete/**", // delete actual user for test
+        //                                "/**",
+                                        "/actuator/**",
+                                        "/ws/**",
+                                        "/chat/**", // this has to be private for authenticated users
+                                        "/websocket-connection/**",
+                                        "/notification",
+                                        "/favicon.ico",
+                                        "/api/auth/signup",
+                                        "/api/auth/login",
+                                        "/api/auth/verify",
+                                        "/api/auth/forgot/verify",
+                                        "/api/auth/forgot",
+                                        "/api/auth/reset",
+                                        "/api/auth/resend-sms",
+                                        "/api/adv/get/**",
+                                        "/api/chat/send-to-admin" // this endpoints have to be authenticated
+                                ).permitAll()
+                                .requestMatchers("/api/adv/create-link/**",
+                                        "/api/adv/qr-code/**",
+                                        "/api/adv/get-by/**",
+                                        "/api/adv/delete",
+                                        "/api/adv/delete-view",
+                                        "/api/adv/update-status").hasRole("USER") // only users
+                                .requestMatchers("/api/chat/send-to-user",
+                                        "/api/chat/view-one/**",
+                                        "/api/chat/get-all-chat",
+                                        "/api/wallet/deposit",
+                                        "/api/admin/getUser/transactions",
+                                        "/api/admin/getUser").hasRole("ADMIN") // only admin
+                                .requestMatchers("/api/transaction/get/**").hasAnyRole("USER", "ADMIN")
+                                .anyRequest().authenticated()
                 )
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(m -> m.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

@@ -13,4 +13,6 @@ public interface WalletRepo extends JpaRepository<Wallet, UUID> {
     boolean existsByUser(Users user);
 
     Optional<Wallet> findByUser(Users user);
+
+    Optional<Wallet> findByUser_Id(UUID userId);
 }

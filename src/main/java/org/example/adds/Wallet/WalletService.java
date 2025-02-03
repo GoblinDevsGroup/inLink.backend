@@ -7,6 +7,7 @@ import org.example.adds.Notification.NotificationService;
 import org.example.adds.Payment.PaymentCheck;
 import org.example.adds.Payment.PaymentCheckRepo;
 import org.example.adds.Response;
+import org.example.adds.Transactions.TransactionService;
 import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersRepo;
 import org.springframework.stereotype.Service;
@@ -96,8 +97,6 @@ public class WalletService {
         return new Response("updated user wallet", true);
     }
 
-    // <<<<<<< dev/Kamol
-// =======
     public Response sendPaymentCheck(UUID userId, MultipartFile file) {
         Users user = usersRepo.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("user not found"));
@@ -125,5 +124,4 @@ public class WalletService {
             return new Response(e.getMessage(), false);
         }
     }
-// >>>>>>> main
 }

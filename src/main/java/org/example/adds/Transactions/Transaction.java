@@ -1,8 +1,9 @@
-package org.example.adds.Wallet;
+package org.example.adds.Transactions;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.context.annotation.Lazy;
+import org.example.adds.Wallet.Valuate;
+import org.example.adds.Wallet.Wallet;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
