@@ -12,24 +12,21 @@ import java.util.UUID;
 @Data
 public class TransactionResponse {
     private UUID id;
+    private String method;
     private TransactionType type;
-    private Valuate valuate;
-    private String description;
     private BigDecimal amount;
     private TransactionState transactionState;
     private LocalDateTime transactionTime;
 
     public TransactionResponse(UUID id,
+                               String method,
                                TransactionType type,
-                               Valuate valuate,
-                               String description,
                                BigDecimal amount,
                                TransactionState transactionState,
                                LocalDateTime transactionTime) {
         this.id = id;
+        this.method = method;
         this.type = type;
-        this.valuate = valuate;
-        this.description = description;
         this.amount = amount;
         this.transactionState = transactionState;
         this.transactionTime = transactionTime;

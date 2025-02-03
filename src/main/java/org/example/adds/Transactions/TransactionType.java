@@ -1,6 +1,6 @@
 package org.example.adds.Transactions;
 
 public enum TransactionType {
-    KIRIM, // Kirim
-    CHIQIM // Chiqim
+    INCOME, // Kirim
+    EXPENSE // Chiqim,
 }

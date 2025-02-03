@@ -27,7 +27,7 @@ public class TransactionService {
         transaction.setAmount(amount);
         transaction.setTransactionTime(LocalDateTime.now());
         transaction.setValuate(Valuate.USZ);
-        transaction.setType(TransactionType.CHIQIM);
+        transaction.setType(TransactionType.EXPENSE);
         transaction.setDescription("an amount "+amount+" UZS charged for " + advTitle);
         transaction.setTransactionState(TransactionState.SUCCESS);
         transactionRepo.save(transaction);
@@ -39,7 +39,7 @@ public class TransactionService {
         transaction.setAmount(amount);
         transaction.setTransactionTime(LocalDateTime.now());
         transaction.setValuate(Valuate.USZ);
-        transaction.setType(TransactionType.CHIQIM);
+        transaction.setType(TransactionType.EXPENSE);
         transaction.setDescription("an amount "+amount+" UZS charged for today");
         transaction.setTransactionState(TransactionState.SUCCESS);
         transactionRepo.save(transaction);
@@ -49,7 +49,7 @@ public class TransactionService {
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
         transaction.setWallet(wallet);
-        transaction.setType(TransactionType.KIRIM);
+        transaction.setType(TransactionType.INCOME);
         transaction.setValuate(Valuate.USZ);
         transaction.setDescription("an amount of "+amount+" UZS has been credited");
         transaction.setTransactionTime(LocalDateTime.now());
@@ -66,13 +66,13 @@ public class TransactionService {
 
         List<Transaction> transactions = transactionRepo.findAllByWallet_Id(wallet.getId());
 
+        String method = "";
         return transactions
                 .stream()
                 .map(transaction -> new TransactionResponse(
                         transaction.getId(),
+                        method,
                         transaction.getType(),
-                        transaction.getValuate(),
-                        transaction.getDescription(),
                         transaction.getAmount(),
                         transaction.getTransactionState(),
                         transaction.getTransactionTime()
