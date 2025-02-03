@@ -45,10 +45,11 @@ public class TransactionService {
         transactionRepo.save(transaction);
     }
 
-    public void saveTransactionForDepositing(Wallet wallet, BigDecimal amount) {
+    public void saveTransactionForDepositing(Wallet wallet, BigDecimal amount, String method) {
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
         transaction.setWallet(wallet);
+        transaction.setMethod(method);
         transaction.setType(TransactionType.INCOME);
         transaction.setValuate(Valuate.USZ);
         transaction.setDescription("an amount of "+amount+" UZS has been credited");

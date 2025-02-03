@@ -29,7 +29,7 @@ public class Transaction implements Serializable {
     @Column(nullable = false)
     private Valuate valuate;
 
-    @JoinColumn(nullable = false)
+    @JoinColumn
     private String method;
 
     @JoinColumn

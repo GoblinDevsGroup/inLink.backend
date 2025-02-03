@@ -9,6 +9,9 @@ public record DepositToWallet(
         @NotNull
         UUID walletId,
         @NotNull
-        BigDecimal amount
+        BigDecimal amount,
+
+        @NotNull
+        String method
 ) {
 }

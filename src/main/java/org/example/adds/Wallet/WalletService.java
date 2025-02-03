@@ -87,7 +87,7 @@ public class WalletService {
         wallet.setUpdatedAt(LocalDateTime.now());
         walletRepo.save(wallet);
 
-        transactionService.saveTransactionForDepositing(wallet, request.amount());
+        transactionService.saveTransactionForDepositing(wallet, request.amount(), request.method());
 
         /* notification to a user about transaction happened */
         notificationService.sendNotificationToUser(wallet.getUser().getId(),

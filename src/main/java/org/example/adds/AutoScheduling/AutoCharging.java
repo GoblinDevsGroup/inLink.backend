@@ -55,7 +55,6 @@ public class AutoCharging {
                 adv.setStatus(AdStatus.INACTIVE);
                 adv.setUpdatedAt(LocalDateTime.now());
                 advertisementRepo.save(adv);
-
                 //todo: implement sms sending feature to notify about failing in charging amount and being inactivated
             }
         }
