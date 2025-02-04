@@ -55,9 +55,9 @@ public class AdvertisementController {
         return new RedirectView(mainLink);
     }
 
-    @GetMapping("/qr-code/{id}")
-    public ResponseEntity<byte[]> getQrCode(@PathVariable UUID id) throws Exception {
-        byte[] qrCodeImage = advertisementService.generateQrCode(id);
+    @GetMapping("/qr-code/{advId}")
+    public ResponseEntity<byte[]> getQrCode(@PathVariable UUID advId) throws Exception {
+        byte[] qrCodeImage = advertisementService.generateQrCode(advId);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.IMAGE_PNG)
                 .header("Content-Disposition", "inline; filename=\"qrcode.png\"")
