@@ -42,6 +42,10 @@ public class Advertisement implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Users user;
 
+    @Lob
+    @JoinColumn
+    private byte[] qrCode;
+
     @JoinColumn
     private LocalDateTime updatedAt;
 }

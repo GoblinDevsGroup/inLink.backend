@@ -81,19 +81,11 @@ public class AdvertisementService {
 //            throw new LinkExpiredException("Link expired");
 //        }
 
-        return QrCodeGenerator.generateQRCodeImageAsByteArray(advLink);
+        byte[] qrCode = QrCodeGenerator.generateQRCodeImageAsByteArray(advLink);
+        adv.setQrCode(qrCode);
+        advertisementRepo.save(adv);
+        return qrCode;
     }
-
-//        public List<AdvResponse> getByUserId(UUID userId, Pageable pageable) {
-//
-//            Users user = usersRepo.findById(userId)
-//                    .orElseThrow(() -> new NoSuchElementException("user not found"));
-//
-//            List<Advertisement> adv = advertisementRepo.findByUser(user);
-//            adv.sort(Comparator.comparing(Advertisement::getCreatedAt).reversed());
-//
-//            return mapper.advertisementListToAdvResponseList(adv);
-//        }
 
     public Page<AdvResponse> getByUserId(UUID userId, Pageable pageable) {
         Users user = usersRepo.findById(userId)
@@ -186,4 +178,10 @@ public class AdvertisementService {
         return new Response("Invalid status value", false);
     }
 
+    public byte[] getQrCode(UUID advId) {
+        Advertisement adv = advertisementRepo.findById(advId)
+                .orElseThrow(() -> new NoSuchElementException("Advertisement not found"));
+
+        return adv.getQrCode();
+    }
 }
