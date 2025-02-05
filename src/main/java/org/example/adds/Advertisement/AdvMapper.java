@@ -18,6 +18,7 @@ public interface AdvMapper {
     @Mapping(target = "visitorNumber", constant = "0")
     @Mapping(target = "user", source = "user")
     @Mapping(target = "advLink", source = "advLink")
+    @Mapping(target = "qrCode", expression = "java(null)")
     Advertisement toEntity(AdvLink request, Users user, String advLink);
 
     AdvResponse toResponse(Advertisement advertisement);

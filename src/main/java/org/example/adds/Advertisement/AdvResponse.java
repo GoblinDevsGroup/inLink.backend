@@ -13,7 +13,6 @@ public class AdvResponse {
     private String advLink;
     private String mainLink;
     private int VisitorNumber;
-    private LocalDateTime expiresAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
