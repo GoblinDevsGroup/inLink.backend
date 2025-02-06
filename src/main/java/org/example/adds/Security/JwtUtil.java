@@ -5,6 +5,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.example.adds.Auth.TokenResponse;
 import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersRepo;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,7 +31,7 @@ public class JwtUtil {
     }
 
 
-    public String generateToken(UserDetails userDetails) {
+    public TokenResponse generateToken(UserDetails userDetails) {
         // Fetch userId from your user service or repository
         Users user = usersRepo.findByPhone(userDetails.getUsername())
                 .orElseThrow(()->new NoSuchElementException("error in fetching user data"));
@@ -40,7 +41,7 @@ public class JwtUtil {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        return Jwts.builder()
+        String accessToken = Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))  // 24 hours
@@ -48,6 +49,7 @@ public class JwtUtil {
                 .claim("userId", userId)
                 .signWith(getKey())
                 .compact();
+        return new TokenResponse(accessToken, user.getFullName());
     }
 
 

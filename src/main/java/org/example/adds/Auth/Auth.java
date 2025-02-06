@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.example.adds.Response;
+import org.example.adds.Security.CustomUserDetailsService;
 import org.example.adds.Security.JwtUtil;
 import org.example.adds.Users.UsersService;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -53,12 +54,14 @@ public class Auth {
                     new UsernamePasswordAuthenticationToken(request.getPhone(), request.getPassword())
             );
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String accessToken = jwtUtil.generateToken(userDetails);
-            return ResponseEntity.ok(new Token(accessToken, "Login successfully", true));
+            String accessToken = jwtUtil.generateToken(userDetails).getAccessToken();
+            String fullName = jwtUtil.generateToken(userDetails).getFullName();
+            return ResponseEntity.ok(new Token(accessToken, "Login successfully", true, fullName));
         } catch (Exception e) {
-            return ResponseEntity.status(400).body(new Token(null, e.getMessage(), false));
+            return ResponseEntity.status(400).body(new Token(null, e.getMessage(), false, null));
         }
     }
+
 
     @PostMapping("/forgot")
     public ResponseEntity<Response> forgotPassword(@RequestBody Phone phone) {
@@ -103,11 +106,13 @@ public class Auth {
     @Data
     public static class Token {
         private String accessToken;
+        private String fullName;
         private String message;
         private boolean success;
 
-        public Token(String accessToken, String message, boolean success) {
+        public Token(String accessToken, String message, boolean success, String fullName) {
             this.accessToken = accessToken;
+            this.fullName = fullName;
             this.message = message;
             this.success = success;
         }
