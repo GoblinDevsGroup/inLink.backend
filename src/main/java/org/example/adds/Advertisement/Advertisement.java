@@ -22,7 +22,8 @@ public class Advertisement implements Serializable {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @JoinColumn(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'ACTIVE'")
+    @Enumerated(EnumType.STRING)
     private AdStatus status;
 
     @Column(nullable = false, unique = true)

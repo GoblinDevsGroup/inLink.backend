@@ -11,6 +11,7 @@ import org.example.adds.Transactions.TransactionService;
 import org.example.adds.Wallet.WalletService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -59,9 +60,7 @@ public class AdvertisementService {
 
         Advertisement adv = getAdvLinkBySubLink(subLink);
 
-//        if (adv.getExpiresAt().isBefore(LocalDateTime.now())) {
-//            throw new LinkExpiredException("Link expired");
-//        }
+        //todo: implement a logic to check link is active or inactive
 
         return adv.getMainLink();
     }
@@ -77,9 +76,6 @@ public class AdvertisementService {
                 .orElseThrow(() -> new NoSuchElementException("link not found"));
 
         String advLink = adv.getAdvLink();
-//        if (adv.getExpiresAt().isBefore(LocalDateTime.now())) {
-//            throw new LinkExpiredException("Link expired");
-//        }
 
         byte[] qrCode = QrCodeGenerator.generateQRCodeImageAsByteArray(advLink);
         adv.setQrCode(qrCode);
@@ -87,14 +83,15 @@ public class AdvertisementService {
         return qrCode;
     }
 
-    public Page<AdvResponse> getByUserId(UUID userId, Pageable pageable) {
-        Users user = usersRepo.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+    public Page<AdvResponse> getByUserId(UUID userId, String searchText, Pageable pageable) {
+        Specification<Advertisement> spec = Specification.where(AdvertisementRepo.searchSpecification(searchText))
+                .and(AdvertisementRepo.hasUserId(userId));
 
-        Page<Advertisement> advPage = advertisementRepo.findByUser(user, pageable);
+        Page<Advertisement> advPage = advertisementRepo.findAll(spec, pageable);
 
         return advPage.map(mapper::toResponse);
     }
+
 
 
     public AdvResponse editAdv(EditAdv request) {

@@ -13,7 +13,7 @@ import java.util.List;
 public interface AdvMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "status", expression = "java(org.example.adds.Advertisement.AdStatus.INACTIVE)")
+    @Mapping(target = "status", expression = "java(org.example.adds.Advertisement.AdStatus.ACTIVE)")
     @Mapping(target = "createdAt", expression = "java(LocalDateTime.now())")
     @Mapping(target = "visitorNumber", constant = "0")
     @Mapping(target = "user", source = "user")

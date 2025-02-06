@@ -28,9 +28,13 @@ public class AdvertisementController {
     private final VisitorsService visitorsService;
 
     @PostMapping("/create-link/{id}")
-    public ResponseEntity<AdvLinkResponse> createAdv(@PathVariable UUID id,
+    public ResponseEntity<Response> createAdv(@PathVariable UUID id,
                                        @RequestBody AdvLink request) {
-        return ResponseEntity.ok(advertisementService.createAdv(id, request));
+        AdvLinkResponse adv = advertisementService.createAdv(id, request);
+        if (adv != null) {
+            return ResponseEntity.ok(new Response("created successfully", true));
+        }
+        return ResponseEntity.ok(new Response("error in creating", false));
     }
 
     @PatchMapping("/update-status")
@@ -80,8 +84,9 @@ public class AdvertisementController {
     @GetMapping("/get-by/{userId}")
     public ResponseEntity<Page<AdvResponse>> getByUserId(
             @PathVariable UUID userId,
+            @RequestParam(value = "searchText", required = false) String searchText,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(advertisementService.getByUserId(userId, pageable));
+        return ResponseEntity.ok(advertisementService.getByUserId(userId,searchText, pageable));
     }
 
 
