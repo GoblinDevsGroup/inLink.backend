@@ -24,8 +24,9 @@
         console.error("WebSocket Error:", error);
     });
 
-    function sendMessage(userId, content) {
+    function sendMessage(adminId, userId, content) {
         const message = {
+            adminId : adminId,
             userId: userId,
             content: content
         };
@@ -35,12 +36,17 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(message)
         })
-            .then(response => response.json())
+            .then(response => response.text())
+            .then(text => text ? JSON.parse(text) : {})
             .then(data => console.log("Message sent:", data))
             .catch(error => console.error("Error sending message:", error));
+
     }
 
-    sendMessage("5b6b050c-7f89-4699-a6bc-2fbad49290bf", "Hello, this is a private message!");
+    sendMessage("5b6b050c-7f89-4699-a6bc-2fbad49290bf",
+        "0f413cb3-8824-4372-bf5f-d43101ae4a96",
+        "Hello, this is a private message!");
+
 </script>
 </body>
 </html>
