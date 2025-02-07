@@ -7,14 +7,14 @@ import java.util.UUID;
 
 @Data
 public class MessageResponse {
-    private UUID from;
-    private UUID to;
+    private UUID admin;
+    private UUID user;
     private String message;
     private LocalDateTime time;
 
-    public MessageResponse(UUID from, UUID to, String message, LocalDateTime time) {
-        this.from = from;
-        this.to = to;
+    public MessageResponse(UUID admin, UUID user, String message, LocalDateTime time) {
+        this.admin = admin;
+        this.user = user;
         this.message = message;
         this.time = time;
     }

@@ -11,9 +11,11 @@ import java.util.UUID;
 @Repository
 public interface ChatRepo extends JpaRepository<Chat, UUID> {
 
-    boolean existsBySenderId(UUID from);
-
-    Chat findBySenderId(UUID from);
+    boolean existsByChatName(String chatName);
 
     List<Chat> findByChatName(String chatName);
+
+    boolean existsByUserId(UUID userId);
+
+    Chat findByUserId(UUID userId);
 }

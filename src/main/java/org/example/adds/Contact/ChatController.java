@@ -40,16 +40,17 @@ public class ChatController {
     }
 
     @PostMapping("/send-to-user")
-    public ResponseEntity<Chat> sentToUser(@RequestBody ChatMessage message) {
+    public ResponseEntity<Chat> sentToUser(@RequestBody ChatMessageFromAdmin message) {
         Chat response = chatService.saveMessageFromAdmin(message);
-        Users user = usersService.findById(message.getUserId());
+        Users user = usersService.findById(response.getUserId());
 
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor
                 .create(SimpMessageType.MESSAGE);
         headerAccessor.setSessionId(user.getPhone());
         headerAccessor.setLeaveMutable(true);
 
-        simpMessagingTemplate.convertAndSendToUser(user.getPhone(), //user ulanadigan kanal
+        simpMessagingTemplate.convertAndSendToUser(
+                user.getPhone(), //user ulanadigan kanal
                 "/queue/private",
                 response,
                 headerAccessor.getMessageHeaders());

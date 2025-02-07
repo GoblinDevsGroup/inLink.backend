@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/webjars/sockjs-client/1.0.2/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<script>
+    const socket = new SockJS('/chat'); // Replace with your actual backend WebSocket URL
+    const stompClient = Stomp.over(socket);
+
+    const userPhone = "+998934583558";
+
+    stompClient.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
+
+        stompClient.subscribe('/user/' + userPhone + '/queue/private', function (message) {
+            console.log("New Private Message:", JSON.parse(message.body));
+        });
+
+    }, function (error) {
+        console.error("WebSocket Error:", error);
+    });
+
+    function sendMessage(userId, content) {
+        const message = {
+            userId: userId,
+            content: content
+        };
+
+        fetch("http://localhost:9000/api/chat/send-to-user", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(message)
+        })
+            .then(response => response.json())
+            .then(data => console.log("Message sent:", data))
+            .catch(error => console.error("Error sending message:", error));
+    }
+
+    sendMessage("5b6b050c-7f89-4699-a6bc-2fbad49290bf", "Hello, this is a private message!");
+</script>
+</body>
+</html>

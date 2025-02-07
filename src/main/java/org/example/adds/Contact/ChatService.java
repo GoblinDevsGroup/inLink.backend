@@ -21,12 +21,12 @@ public class ChatService {
 
     public Chat saveMessageFromUser(ChatMessage request) {
 
-        if (chatRepo.existsBySenderId(request.getUserId())) {
-            String chatName = chatRepo.findBySenderId(request.getUserId()).getChatName();
+        if (chatRepo.existsByUserId(request.getUserId())) {
+            String chatName = chatRepo.findByUserId(request.getUserId()).getChatName();
             Chat chat = new Chat();
             chat.setChatName(chatName);
-            chat.setSenderId(request.getUserId());
-            chat.setRecipientId(adminId()); //admin
+            chat.setUserId(request.getUserId());
+            chat.setAdminId(adminId()); //admin
             chat.setMessage(request.getContent());
             chat.setTime(LocalDateTime.now());
             return chatRepo.save(chat);
@@ -42,9 +42,20 @@ public class ChatService {
         Chat chat = new Chat();
         String chatName = generateRandomName();
         chat.setChatName(chatName);
-        chat.setSenderId(from);
+        chat.setUserId(from);
         chat.setMessage(request.getContent());
-        chat.setRecipientId(to);
+        chat.setAdminId(to);
+        chat.setTime(LocalDateTime.now());
+        return chatRepo.save(chat);
+    }
+
+    private Chat openNewChat(ChatMessageFromAdmin request, UUID to, UUID from) {
+        Chat chat = new Chat();
+        String chatName = generateRandomName();
+        chat.setChatName(chatName);
+        chat.setUserId(from);
+        chat.setMessage(request.content());
+        chat.setAdminId(to);
         chat.setTime(LocalDateTime.now());
         return chatRepo.save(chat);
     }
@@ -53,21 +64,23 @@ public class ChatService {
         return String.format("%06d", new Random().nextInt(1000000)); // Always generates a 4-digit number
     }
 
-    public Chat saveMessageFromAdmin(ChatMessage message) {
+    public Chat saveMessageFromAdmin(ChatMessageFromAdmin message) {
 
-        if (chatRepo.existsBySenderId(message.getUserId())) {
-            String chatName = chatRepo.findBySenderId(message.getUserId()).getChatName();
+        UUID userId = chatRepo.findByChatName(message.chatName())
+                .getLast().getUserId();
+
+        if (chatRepo.existsByChatName(message.chatName())) {
             Chat chat = new Chat();
-            chat.setChatName(chatName);
-            chat.setSenderId(adminId());
-            chat.setRecipientId(message.getUserId()); //admin
-            chat.setMessage(message.getContent());
+            chat.setChatName(message.chatName());
+            chat.setUserId(userId);
+            chat.setAdminId(message.adminId()); //admin
+            chat.setMessage(message.content());
             chat.setTime(LocalDateTime.now());
             return chatRepo.save(chat);
         }
         else
         {
-            return openNewChat(message, message.getUserId(), adminId());
+            return openNewChat(message, userId, adminId());
         }
     }
 
@@ -85,8 +98,8 @@ public class ChatService {
                     String chatName = entry.getKey();
                     List<MessageResponse> messages = entry.getValue().stream()
                             .map(chat -> new MessageResponse(
-                                    chat.getSenderId(),
-                                    chat.getRecipientId(),
+                                    chat.getAdminId(),
+                                    chat.getUserId(),
                                     chat.getMessage(),
                                     chat.getTime()
                             ))
@@ -111,8 +124,8 @@ public class ChatService {
 
         List<MessageResponse> messages = chat.stream().map(
                 chat1 -> new MessageResponse(
-                        chat1.getSenderId(),
-                        chat1.getRecipientId(),
+                        chat1.getAdminId(),
+                        chat1.getUserId(),
                         chat1.getMessage(),
                         chat1.getTime()
                 )

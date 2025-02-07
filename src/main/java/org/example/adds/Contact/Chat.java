@@ -22,10 +22,10 @@ public class Chat implements Serializable {
     private String chatName;
 
     @Column
-    private UUID senderId;
+    private UUID userId;
 
     @Column
-    private UUID recipientId;
+    private UUID adminId;
 
     @Column
     private String message;
