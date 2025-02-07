@@ -16,7 +16,7 @@ public class ChatService {
     private final UsersRepo usersRepo;
 
     private UUID adminId() {
-        return usersRepo.findByPhone("+998900000000").get().getId();
+        return usersRepo.findByPhone("+998934583558").get().getId();
     }
 
     public Chat saveMessageFromUser(ChatMessage request) {
@@ -61,18 +61,15 @@ public class ChatService {
     }
 
     private String generateRandomName() {
-        return String.format("%06d", new Random().nextInt(1000000)); // Always generates a 4-digit number
+        return String.format("%06d", new Random().nextInt(1000000));
     }
 
     public Chat saveMessageFromAdmin(ChatMessageFromAdmin message) {
-
-        UUID userId = chatRepo.findByChatName(message.chatName())
-                .getLast().getUserId();
-
-        if (chatRepo.existsByChatName(message.chatName())) {
+        if (chatRepo.existsByUserId(message.userId())) {
             Chat chat = new Chat();
-            chat.setChatName(message.chatName());
-            chat.setUserId(userId);
+            Chat chat1 = chatRepo.findByUserId(message.userId());
+            chat.setChatName(chat1.getChatName());
+            chat.setUserId(message.userId());
             chat.setAdminId(message.adminId()); //admin
             chat.setMessage(message.content());
             chat.setTime(LocalDateTime.now());
@@ -80,7 +77,7 @@ public class ChatService {
         }
         else
         {
-            return openNewChat(message, userId, adminId());
+            return openNewChat(message, message.userId(), adminId());
         }
     }
 

@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public record ChatMessageFromAdmin(
         UUID adminId,
-        String chatName,
+        UUID userId,
         String content
 
 ) {

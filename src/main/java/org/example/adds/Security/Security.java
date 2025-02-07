@@ -35,13 +35,12 @@ public class Security {
         http
                 .authorizeHttpRequests((auth) -> auth
                                 .requestMatchers(SWAGGER_URLS).permitAll()
-                                .requestMatchers("/wss/**",
+                                .requestMatchers(
                                         "/api/auth/delete/**", // delete drafted user for test
                                         "/api/user/delete/**", // delete actual user for test
-                                        "/**",
+                                        "/admin-chat.html",
                                         "/actuator/**",
-                                        "/ws/**",
-                                        "/chat/**", // this has to be private for authenticated users
+                                        // this has to be private for authenticated users
                                         "/websocket-connection/**",
                                         "/notification",
                                         "/favicon.ico",
@@ -68,7 +67,10 @@ public class Security {
                                         "/api/wallet/deposit",
                                         "/api/admin/getUser/transactions",
                                         "/api/admin/getUser").hasRole("ADMIN") // only admin
-                                .requestMatchers("/api/transaction/get/**").hasAnyRole("USER", "ADMIN")
+                                .requestMatchers("/api/transaction/get/**",
+                                        "/wss/**",
+                                        "/ws/**",
+                                        "/chat/**").hasAnyRole("USER", "ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
