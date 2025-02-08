@@ -1,11 +1,11 @@
 package org.example.adds.Advertisement;
 
 
+import org.example.adds.Advertisement.Dto.AdvResponse;
 import org.example.adds.Users.Users;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper(componentModel = "spring",imports = {java.time.LocalDateTime.class,

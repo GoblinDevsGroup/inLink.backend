@@ -1,6 +1,7 @@
-package org.example.adds.Advertisement;
+package org.example.adds.Advertisement.Dto;
 
 import lombok.Data;
+import org.example.adds.Advertisement.AdStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

@@ -3,19 +3,17 @@ package org.example.adds.Advertisement;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.apache.coyote.BadRequestException;
+import org.example.adds.Advertisement.Dto.*;
 import org.example.adds.Response;
 import org.example.adds.Visitors.VisitorsService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -59,34 +57,12 @@ public class AdvertisementController {
         return new RedirectView(mainLink);
     }
 
-    @GetMapping("/qr-code/{advId}")
-    public ResponseEntity<byte[]> getQrCode(@PathVariable UUID advId) throws Exception {
-        byte[] qrCodeImage = advertisementService.generateQrCode(advId);
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.IMAGE_PNG)
-                .header("Content-Disposition",
-                        "inline;" +
-                                " filename=\"qrcode.png\"")
-                .body(qrCodeImage);
-    }
-
-    @GetMapping("/qr-code/download/{advId}")
-    public ResponseEntity<byte[]> downloadQrCode(@PathVariable UUID advId) throws Exception {
-        byte[] qrCode = advertisementService.getQrCode(advId);
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.IMAGE_PNG)
-                .header("Content-Disposition",
-                        "attachment;" +
-                                " filename=\"qrcode.png\"")
-                .body(qrCode);
-    }
-
     @GetMapping("/get-by/{userId}")
-    public ResponseEntity<Page<AdvResponse>> getByUserId(
+    public ResponseEntity<Page<AdvResponse>> getAdvByUserIdWithSearchingAndPageable(
             @PathVariable UUID userId,
             @RequestParam(value = "searchText", required = false) String searchText,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(advertisementService.getByUserId(userId,searchText, pageable));
+        return ResponseEntity.ok(advertisementService.getAdvByUserIdWithSearchingAndPageable(userId,searchText, pageable));
     }
 
 

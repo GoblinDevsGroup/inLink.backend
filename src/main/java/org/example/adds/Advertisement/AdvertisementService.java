@@ -3,11 +3,10 @@ package org.example.adds.Advertisement;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.apache.coyote.BadRequestException;
-import org.example.adds.QRcode.QrCodeGenerator;
+import org.example.adds.Advertisement.Dto.*;
 import org.example.adds.Response;
 import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersRepo;
-import org.example.adds.Transactions.TransactionService;
 import org.example.adds.Wallet.WalletService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +26,6 @@ public class AdvertisementService {
     private final UsersRepo usersRepo;
     private final AdvMapper mapper;
     private final WalletService walletService;
-    private final TransactionService transactionService;
-
     private final static String baseLink = "https://sculpin-golden-bluejay.ngrok-free.app/api/adv/get/";
 
     public AdvLinkResponse createAdv(UUID id, AdvLink request) {
@@ -72,19 +69,7 @@ public class AdvertisementService {
                 .orElseThrow(() -> new NoSuchElementException("Link not found"));
     }
 
-    public byte[] generateQrCode(UUID id) throws Exception {
-        Advertisement adv = advertisementRepo.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("link not found"));
-
-        String advLink = adv.getAdvLink();
-
-        byte[] qrCode = QrCodeGenerator.generateQRCodeImageAsByteArray(advLink);
-        adv.setQrCode(qrCode);
-        advertisementRepo.save(adv);
-        return qrCode;
-    }
-
-    public Page<AdvResponse> getByUserId(UUID userId, String searchText, Pageable pageable) {
+    public Page<AdvResponse> getAdvByUserIdWithSearchingAndPageable(UUID userId, String searchText, Pageable pageable) {
         Specification<Advertisement> spec = Specification.where(AdvertisementRepo.searchSpecification(searchText))
                 .and(AdvertisementRepo.hasUserId(userId));
 
@@ -173,13 +158,6 @@ public class AdvertisementService {
         }
 
         return new Response("Invalid status value", false);
-    }
-
-    public byte[] getQrCode(UUID advId) {
-        Advertisement adv = advertisementRepo.findById(advId)
-                .orElseThrow(() -> new NoSuchElementException("Advertisement not found"));
-
-        return adv.getQrCode();
     }
 
     public List<AdvResponse> getAllAdv() {

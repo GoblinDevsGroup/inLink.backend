@@ -1,4 +1,4 @@
-package org.example.adds.Auth;
+package org.example.adds.Auth.Dto;
 
 import lombok.Data;
 import lombok.Getter;

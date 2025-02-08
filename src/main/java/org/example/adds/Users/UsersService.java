@@ -2,8 +2,7 @@ package org.example.adds.Users;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
-import org.example.adds.Auth.*;
+import org.example.adds.Auth.Dto.*;
 import org.example.adds.DraftUser.DraftUserRepo;
 import org.example.adds.DraftUser.DraftUsers;
 import org.example.adds.ExceptionHandlers.AllReadyExists;

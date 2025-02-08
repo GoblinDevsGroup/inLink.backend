@@ -1,4 +1,4 @@
-package org.example.adds.Notification;
+package org.example.adds.WebSocket;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

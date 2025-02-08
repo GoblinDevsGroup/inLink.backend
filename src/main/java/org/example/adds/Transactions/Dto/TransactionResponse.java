@@ -1,9 +1,8 @@
-package org.example.adds.Transactions;
+package org.example.adds.Transactions.Dto;
 
-import jakarta.persistence.Column;
 import lombok.Data;
-import org.example.adds.Wallet.Valuate;
-import org.example.adds.Wallet.Wallet;
+import org.example.adds.Transactions.TransactionState;
+import org.example.adds.Transactions.TransactionType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
