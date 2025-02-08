@@ -2,8 +2,10 @@ package org.example.adds.Advertisement;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.example.adds.Advertisement.Dto.*;
+import org.example.adds.ExceptionHandlers.PermissionDenied;
 import org.example.adds.Response;
 import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersRepo;
@@ -20,13 +22,14 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class AdvertisementService {
+public class AdvertisementService{
 
     private final AdvertisementRepo advertisementRepo;
     private final UsersRepo usersRepo;
     private final AdvMapper mapper;
     private final WalletService walletService;
     private final static String baseLink = "https://sculpin-golden-bluejay.ngrok-free.app/api/adv/get/";
+
 
     public AdvLinkResponse createAdv(UUID id, AdvLink request) {
 
@@ -123,44 +126,48 @@ public class AdvertisementService {
     @Transactional
     public Response updateStatus(UpdateStatus request) {
         if (request == null) {
-            return new Response("Invalid request", false);
+            throw new IllegalArgumentException("Invalid request");
         }
 
         Advertisement adv = advertisementRepo.findById(request.advId())
                 .orElseThrow(() -> new NoSuchElementException("Advertisement not found"));
 
+        Users user = adv.getUser();
 
-        Users user = usersRepo.findById(request.userId())
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
-
-
-        if (!adv.getUser().equals(user)) {
-            return new Response("Permission denied", false);
+        if (!user.getId().equals(request.userId())) {
+            throw new PermissionDenied("Permission denied");
         }
 
-        if (request.status().equals(AdStatus.ACTIVE)) {
-            boolean result = walletService.checkUserWallet(user);
+        return updateAdvertisementStatus(adv, user, request.status());
+    }
 
-            if (result) {
-                adv.setStatus(AdStatus.ACTIVE);
-                adv.setUpdatedAt(LocalDateTime.now());
-                advertisementRepo.save(adv);
-                walletService.chargeFromWallet(user, adv.getTitle());
-                return new Response("activated successfully", true);
-            } else {
-                return new Response("Charging failed. Please check your balance", false);
-            }
+    private Response updateAdvertisementStatus(Advertisement adv, Users user, AdStatus status) {
+        LocalDateTime now = LocalDateTime.now();
+        adv.setUpdatedAt(now);
+
+        return switch (status) {
+            case ACTIVE -> activateAdvertisement(adv, user);
+            case INACTIVE -> inactivateAdvertisement(adv);
+            default -> throw new IllegalArgumentException("Invalid status value");
+        };
+    }
+
+    private Response activateAdvertisement(Advertisement adv, Users user) {
+        if (!walletService.checkUserWallet(user)) {
+            return new Response("Charging failed. Please check your balance", false);
         }
 
-        if (request.status().equals(AdStatus.INACTIVE)) {
-            adv.setStatus(AdStatus.INACTIVE);
-            adv.setUpdatedAt(LocalDateTime.now());
-            //todo: method to not charge from a user wallet for this advertisement since the user is making it inactive
-            advertisementRepo.save(adv);
-            return new Response("inactivated successfully", true);
-        }
+        adv.setStatus(AdStatus.ACTIVE);
+        advertisementRepo.save(adv);
+        walletService.chargeFromWallet(user, adv.getTitle());
 
-        return new Response("Invalid status value", false);
+        return new Response("Activated successfully", true);
+    }
+
+    private Response inactivateAdvertisement(Advertisement adv) {
+        adv.setStatus(AdStatus.INACTIVE);
+        advertisementRepo.save(adv);
+        return new Response("Inactivated successfully", true);
     }
 
     public List<AdvResponse> getAllAdv() {
