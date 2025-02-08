@@ -1,6 +1,9 @@
 package org.example.adds.Admin;
 
 import lombok.AllArgsConstructor;
+import org.example.adds.Advertisement.AdvResponse;
+import org.example.adds.Advertisement.Advertisement;
+import org.example.adds.Advertisement.AdvertisementService;
 import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersDto;
 import org.example.adds.Users.UsersService;
@@ -21,10 +24,15 @@ import java.util.UUID;
 public class AdminController {
     private final UsersService usersService;
     private final TransactionService transactionService;
+    private final AdvertisementService advertisementService;
 
     @GetMapping
     public ResponseEntity<List<Users>> getAllUsers() {
         return ResponseEntity.ok(this.usersService.getAllUsers());
+    }
+    @GetMapping("/get-all/adv")
+    public ResponseEntity<List<AdvResponse>>getAllAdvertisements() {
+        return ResponseEntity.ok(this.advertisementService.getAllAdv());
     }
 
     @GetMapping("/getUser/transactions")
@@ -35,6 +43,8 @@ public class AdminController {
     public ResponseEntity<UsersDto> getUserById(@RequestParam(value = "id") UUID userId) {
        return ResponseEntity.ok(this.usersService.getUserById(userId));
     }
+
+
 
 
 }
