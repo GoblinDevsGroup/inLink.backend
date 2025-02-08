@@ -1,4 +1,4 @@
-package org.example.adds.Advertisement;
+package org.example.adds.Advertisement.Dto;
 
 import lombok.Data;
 

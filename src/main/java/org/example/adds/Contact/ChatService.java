@@ -1,6 +1,10 @@
 package org.example.adds.Contact;
 
 import lombok.AllArgsConstructor;
+import org.example.adds.Contact.Dto.ChatMessage;
+import org.example.adds.Contact.Dto.ChatMessageFromAdmin;
+import org.example.adds.Contact.Dto.ChatResponse;
+import org.example.adds.Contact.Dto.MessageResponse;
 import org.example.adds.Users.UsersRepo;
 import org.springframework.stereotype.Service;
 

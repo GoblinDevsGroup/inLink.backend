@@ -2,13 +2,11 @@ package org.example.adds.Advertisement;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.Value;
 import org.apache.coyote.BadRequestException;
-import org.example.adds.QRcode.QrCodeGenerator;
+import org.example.adds.Advertisement.Dto.*;
 import org.example.adds.Response;
 import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersRepo;
-import org.example.adds.Transactions.TransactionService;
 import org.example.adds.Wallet.WalletService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -70,7 +68,7 @@ public class AdvertisementService {
                 .orElseThrow(() -> new NoSuchElementException("Link not found"));
     }
 
-    public Page<AdvResponse> getByUserId(UUID userId, String searchText, Pageable pageable) {
+    public Page<AdvResponse> getAdvByUserIdWithSearchingAndPageable(UUID userId, String searchText, Pageable pageable) {
         Specification<Advertisement> spec = Specification.where(AdvertisementRepo.searchSpecification(searchText))
                 .and(AdvertisementRepo.hasUserId(userId));
 

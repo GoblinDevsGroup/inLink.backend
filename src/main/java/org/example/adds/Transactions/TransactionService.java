@@ -1,10 +1,10 @@
 package org.example.adds.Transactions;
 
 import lombok.AllArgsConstructor;
+import org.example.adds.Transactions.Dto.TransactionResponse;
 import org.example.adds.Wallet.Valuate;
 import org.example.adds.Wallet.Wallet;
 import org.example.adds.Wallet.WalletRepo;
-import org.example.adds.Wallet.WalletService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

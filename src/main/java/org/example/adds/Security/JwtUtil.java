@@ -5,7 +5,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.example.adds.Auth.TokenResponse;
+import org.example.adds.Auth.Dto.TokenResponse;
 import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersRepo;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
