@@ -1,9 +1,8 @@
 package org.example.adds.Admin;
 
 import lombok.AllArgsConstructor;
-import org.example.adds.Advertisement.AdvResponse;
-import org.example.adds.Advertisement.Advertisement;
 import org.example.adds.Advertisement.AdvertisementService;
+import org.example.adds.Advertisement.Dto.AdvResponse;
 import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersDto;
 import org.example.adds.Users.UsersService;
@@ -31,7 +30,7 @@ public class AdminController {
         return ResponseEntity.ok(this.usersService.getAllUsers());
     }
     @GetMapping("/get-all/adv")
-    public ResponseEntity<List<AdvResponse>>getAllAdvertisements() {
+    public ResponseEntity<List<AdvResponse>> getAllAdvertisements() {
         return ResponseEntity.ok(this.advertisementService.getAllAdv());
     }
 
@@ -43,8 +42,4 @@ public class AdminController {
     public ResponseEntity<UsersDto> getUserById(@RequestParam(value = "id") UUID userId) {
        return ResponseEntity.ok(this.usersService.getUserById(userId));
     }
-
-
-
-
 }

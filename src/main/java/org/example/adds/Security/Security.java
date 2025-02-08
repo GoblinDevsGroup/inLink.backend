@@ -66,7 +66,8 @@ public class Security {
                                         "/api/chat/get-all-chat",
                                         "/api/wallet/deposit",
                                         "/api/admin/getUser/transactions",
-                                        "/api/admin/getUser").hasRole("ADMIN") // only admin
+                                        "/api/admin/getUser",
+                                        "/api/admin/get-all/adv").hasRole("ADMIN") // only admin
                                 .requestMatchers("/api/transaction/get/**",
                                         "/wss/**",
                                         "/ws/**",

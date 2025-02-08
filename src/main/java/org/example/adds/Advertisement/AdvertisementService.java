@@ -69,8 +69,11 @@ public class AdvertisementService {
                 .orElseThrow(() -> new NoSuchElementException("Link not found"));
     }
 
-    public Page<AdvResponse> getAdvByUserIdWithSearchingAndPageable(UUID userId, String searchText, Pageable pageable) {
-        Specification<Advertisement> spec = Specification.where(AdvertisementRepo.searchSpecification(searchText))
+    public Page<AdvResponse> getAdvByUserIdWithSearchingAndPageable(UUID userId,
+                                                                    String searchText,
+                                                                    Pageable pageable) {
+        Specification<Advertisement> spec = Specification
+                .where(AdvertisementRepo.searchSpecification(searchText))
                 .and(AdvertisementRepo.hasUserId(userId));
 
         Page<Advertisement> advPage = advertisementRepo.findAll(spec, pageable);
