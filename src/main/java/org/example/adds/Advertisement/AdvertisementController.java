@@ -59,28 +59,6 @@ public class AdvertisementController {
         return new RedirectView(mainLink);
     }
 
-    @GetMapping("/qr-code/{advId}")
-    public ResponseEntity<byte[]> getQrCode(@PathVariable UUID advId) throws Exception {
-        byte[] qrCodeImage = advertisementService.generateQrCode(advId);
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.IMAGE_PNG)
-                .header("Content-Disposition",
-                        "inline;" +
-                                " filename=\"qrcode.png\"")
-                .body(qrCodeImage);
-    }
-
-    @GetMapping("/qr-code/download/{advId}")
-    public ResponseEntity<byte[]> downloadQrCode(@PathVariable UUID advId) throws Exception {
-        byte[] qrCode = advertisementService.getQrCode(advId);
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.IMAGE_PNG)
-                .header("Content-Disposition",
-                        "attachment;" +
-                                " filename=\"qrcode.png\"")
-                .body(qrCode);
-    }
-
     @GetMapping("/get-by/{userId}")
     public ResponseEntity<Page<AdvResponse>> getByUserId(
             @PathVariable UUID userId,

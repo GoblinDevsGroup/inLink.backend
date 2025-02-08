@@ -55,12 +55,12 @@ public class Security {
                                         "/api/chat/send-to-admin" // this endpoints have to be authenticated
                                 ).permitAll()
                                 .requestMatchers("/api/adv/create-link/**",
-                                        "/api/adv/qr-code/**",
                                         "/api/adv/get-by/**",
                                         "/api/adv/delete",
                                         "/api/adv/delete-view",
                                         "/api/adv/update-status",
-                                        "/api/adv/qr-code/download/**").hasRole("USER") // only users
+                                        "/api/qrcode/create/**",
+                                        "/api/qrcode/download/**").hasRole("USER") // only users
                                 .requestMatchers("/api/chat/send-to-user",
                                         "/api/chat/view-one/**",
                                         "/api/chat/get-all-chat",

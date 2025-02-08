@@ -2,6 +2,7 @@ package org.example.adds.Advertisement;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.Value;
 import org.apache.coyote.BadRequestException;
 import org.example.adds.QRcode.QrCodeGenerator;
 import org.example.adds.Response;
@@ -26,8 +27,6 @@ public class AdvertisementService {
     private final UsersRepo usersRepo;
     private final AdvMapper mapper;
     private final WalletService walletService;
-    private final TransactionService transactionService;
-
     private final static String baseLink = "https://sculpin-golden-bluejay.ngrok-free.app/api/adv/get/";
 
     public AdvLinkResponse createAdv(UUID id, AdvLink request) {
@@ -69,18 +68,6 @@ public class AdvertisementService {
         String advLink = baseLink + subLink;
         return advertisementRepo.findByAdvLink(advLink)
                 .orElseThrow(() -> new NoSuchElementException("Link not found"));
-    }
-
-    public byte[] generateQrCode(UUID id) throws Exception {
-        Advertisement adv = advertisementRepo.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("link not found"));
-
-        String advLink = adv.getAdvLink();
-
-        byte[] qrCode = QrCodeGenerator.generateQRCodeImageAsByteArray(advLink);
-        adv.setQrCode(qrCode);
-        advertisementRepo.save(adv);
-        return qrCode;
     }
 
     public Page<AdvResponse> getByUserId(UUID userId, String searchText, Pageable pageable) {
@@ -173,12 +160,5 @@ public class AdvertisementService {
         }
 
         return new Response("Invalid status value", false);
-    }
-
-    public byte[] getQrCode(UUID advId) {
-        Advertisement adv = advertisementRepo.findById(advId)
-                .orElseThrow(() -> new NoSuchElementException("Advertisement not found"));
-
-        return adv.getQrCode();
     }
 }
