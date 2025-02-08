@@ -63,4 +63,10 @@ public class CustomExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new Response(ex.getMessage(), false));
     }
+
+    @ExceptionHandler(PermissionDenied.class)
+    public ResponseEntity<Response> handlePermissionDeniedException(PermissionDenied ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new Response(ex.getMessage(), false));
+    }
 }
