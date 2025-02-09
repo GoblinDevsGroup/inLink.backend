@@ -55,6 +55,9 @@ dependencies {
     implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
 }
 
+test {
+    jvmArgs += ["-Djdk.attach.allowAttachSelf=true"]
+}
 tasks.named('test') {
     useJUnitPlatform()
 }

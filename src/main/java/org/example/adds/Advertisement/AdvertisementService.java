@@ -2,7 +2,6 @@ package org.example.adds.Advertisement;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.example.adds.Advertisement.Dto.*;
 import org.example.adds.ExceptionHandlers.PermissionDenied;
@@ -22,7 +21,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class AdvertisementService{
+public class AdvertisementService {
 
     private final AdvertisementRepo advertisementRepo;
     private final UsersRepo usersRepo;

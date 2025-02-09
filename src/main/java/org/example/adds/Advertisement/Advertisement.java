@@ -49,4 +49,28 @@ public class Advertisement implements Serializable {
 
     @JoinColumn
     private LocalDateTime updatedAt;
+
+    public Advertisement(UUID id,
+                         String title,
+                         AdStatus status,
+                         String advLink,
+                         String mainLink,
+                         int visitorNumber,
+                         LocalDateTime createdAt,
+                         Users user,
+                         byte[] qrCode,
+                         LocalDateTime updatedAt) {
+        this.id = id;
+        this.title = title;
+        this.status = status;
+        this.advLink = advLink;
+        this.mainLink = mainLink;
+        VisitorNumber = visitorNumber;
+        this.createdAt = createdAt;
+        this.user = user;
+        this.qrCode = qrCode;
+        this.updatedAt = updatedAt;
+    }
+    public Advertisement() {
+    }
 }

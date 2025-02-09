@@ -43,4 +43,25 @@ public class Users implements Serializable {
         ROLE_USER,
         ROLE_ADMIN
     }
+
+    public Users(UUID id,
+                 String fullName,
+                 String companyName,
+                 String phone,
+                 String password,
+                 UserRole userRole,
+                 LocalDateTime createdAt,
+                 LocalDateTime updatedAt) {
+        this.id = id;
+        this.fullName = fullName;
+        this.companyName = companyName;
+        this.phone = phone;
+        this.password = password;
+        this.userRole = userRole;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public Users() {
+    }
 }
