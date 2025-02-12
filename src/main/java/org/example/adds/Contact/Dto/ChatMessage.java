@@ -9,4 +9,12 @@ import java.util.UUID;
 public class ChatMessage {
     private UUID userId;
     private String content;
+
+    public ChatMessage() {
+    }
+
+    public ChatMessage(UUID userId, String content) {
+        this.userId = userId;
+        this.content = content;
+    }
 }
