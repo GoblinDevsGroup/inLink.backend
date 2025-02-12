@@ -55,10 +55,9 @@ public class Auth {
             );
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String accessToken = jwtUtil.generateToken(userDetails).getAccessToken();
-            String fullName = jwtUtil.generateToken(userDetails).getFullName();
-            return ResponseEntity.ok(new Token(accessToken, "Login successfully", true, fullName));
+            return ResponseEntity.ok(new Token(accessToken, "Login successfully", true));
         } catch (Exception e) {
-            return ResponseEntity.status(400).body(new Token(null, e.getMessage(), false, null));
+            return ResponseEntity.status(400).body(new Token(null, e.getMessage(), false));
         }
     }
 
@@ -106,13 +105,11 @@ public class Auth {
     @Data
     public static class Token {
         private String accessToken;
-        private String fullName;
         private String message;
         private boolean success;
 
-        public Token(String accessToken, String message, boolean success, String fullName) {
+        public Token(String accessToken, String message, boolean success) {
             this.accessToken = accessToken;
-            this.fullName = fullName;
             this.message = message;
             this.success = success;
         }

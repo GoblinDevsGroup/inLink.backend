@@ -17,5 +17,5 @@ public interface ChatRepo extends JpaRepository<Chat, UUID> {
 
     boolean existsByUserId(UUID userId);
 
-    Chat findByUserId(UUID userId);
+    List<Chat> findByUserId(UUID userId);
 }

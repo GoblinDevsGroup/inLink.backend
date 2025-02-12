@@ -19,24 +19,25 @@ public class ChatService {
     private final ChatRepo chatRepo;
     private final UsersRepo usersRepo;
 
-    private UUID adminId() {
-        return usersRepo.findByPhone("+998934583558").get().getId();
+    public UUID adminId() {
+        return usersRepo.findByPhone("+998933592103").get().getId();
     }
 
     public Chat saveMessageFromUser(ChatMessage request) {
 
         if (chatRepo.existsByUserId(request.getUserId())) {
-            String chatName = chatRepo.findByUserId(request.getUserId()).getChatName();
+            String chatName = chatRepo.findByUserId(request.getUserId()).getLast().getChatName();
             Chat chat = new Chat();
             chat.setChatName(chatName);
             chat.setUserId(request.getUserId());
             chat.setAdminId(adminId()); //admin
             chat.setMessage(request.getContent());
             chat.setTime(LocalDateTime.now());
+
             return chatRepo.save(chat);
         }
         else
-        {
+        {                                 //to,         //from
             return openNewChat(request, adminId(), request.getUserId());
         }
 
@@ -71,7 +72,7 @@ public class ChatService {
     public Chat saveMessageFromAdmin(ChatMessageFromAdmin message) {
         if (chatRepo.existsByUserId(message.userId())) {
             Chat chat = new Chat();
-            Chat chat1 = chatRepo.findByUserId(message.userId());
+            Chat chat1 = chatRepo.findByUserId(message.userId()).getLast();
             chat.setChatName(chat1.getChatName());
             chat.setUserId(message.userId());
             chat.setAdminId(message.adminId()); //admin
@@ -80,7 +81,7 @@ public class ChatService {
             return chatRepo.save(chat);
         }
         else
-        {
+        {                                 //to              //from
             return openNewChat(message, message.userId(), adminId());
         }
     }

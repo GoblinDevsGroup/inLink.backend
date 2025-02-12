@@ -46,6 +46,7 @@ public class JwtUtil {
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))  // 24 hours
                 .claim("role", roles)
+                .claim("fullName", user.getFullName())
                 .claim("userId", userId)
                 .signWith(getKey())
                 .compact();
@@ -89,4 +90,12 @@ public class JwtUtil {
         return new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
     }
 
+    public String getUsernameFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject();
+    }
 }

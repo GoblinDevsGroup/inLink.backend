@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Test WebSocket Message</title>
+    <script src="/webjars/sockjs-client/1.0.2/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+
+<h2>WebSocket Test</h2>
+
+<label for="userId">User ID:</label>
+<input type="text" id="userId" name="userId" required>
+<label for="token">token :</label>
+<input type="text" id="token" name="token" required>
+<button id="connectButton">Connect to WebSocket</button>
+
+<h3>Send Message</h3>
+<input type="text" id="message" placeholder="Enter your message" disabled>
+<button id="sendMessageButton" disabled>Send Message</button>
+
+<div id="response"></div>
+
+<script>
+    let stompClient;
+    let userId;
+    let token;
+
+    function connectWebSocket() {
+        userId = document.getElementById("userId").value;
+        token = document.getElementById("token").value;
+        if (!userId) {
+            alert("Please enter a valid User ID!");
+            return;
+        }
+
+        // const socket = new SockJS("https://sculpin-golden-bluejay.ngrok-free.app/chat?token="+token);
+        const socket = new SockJS("https://sculpin-golden-bluejay.ngrok-free.app/chat");
+        stompClient = Stomp.over(socket);
+        stompClient.connect({Authorization: `Bearer ${token}`}, function (frame) {
+            console.log("Connected: " + frame);
+
+            stompClient.subscribe(`/user/${userId}/queue/private`, function (message) {
+                displayMessage(JSON.parse(message.body));
+            });
+            document.getElementById("message").disabled = false;
+            document.getElementById("sendMessageButton").disabled = false;
+            alert("Connected to WebSocket successfully!");
+        }, function (error) {
+            console.error("WebSocket Error:", error);
+        });
+    }
+
+    function displayMessage(message) {
+        const responseDiv = document.getElementById("response");
+        const newMessage = document.createElement("p");
+        newMessage.textContent = `Received message: ${message.content}`;
+        responseDiv.appendChild(newMessage);
+    }
+
+    function sendMessage() {
+        const messageContent = document.getElementById("message").value;
+
+        fetch("https://sculpin-golden-bluejay.ngrok-free.app/api/chat/send-to-admin", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                userId: userId,
+                content: messageContent
+            })
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    console.log("Test message sent: ", messageContent);
+                    displayMessage(content);
+                } else {
+                    console.error("Error: ", response.status);
+                }
+            })
+            .catch(error => {
+                console.error("Error sending test message:", error);
+            });
+    }
+
+    document.getElementById("connectButton").addEventListener("click", function () {
+        connectWebSocket();
+    });
+
+    document.getElementById("sendMessageButton").addEventListener("click", function () {
+        sendMessage();
+    });
+</script>
+
+</body>
+</html>

@@ -10,9 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/chat")
@@ -28,19 +31,38 @@ public class ChatController {
         Chat response = chatService.saveMessageFromUser(message);
         Users user = usersService.findById(message.getUserId());
 
-        SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor
-                .create(SimpMessageType.MESSAGE);
-        headerAccessor.setSessionId(user.getPhone());
+        SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create();
+        headerAccessor.setContentType(MimeTypeUtils.APPLICATION_JSON);
+        headerAccessor.setSessionId(user.getId().toString());
         headerAccessor.setLeaveMutable(true);
 
-//        simpMessagingTemplate.convertAndSendToUser(user.getPhone(), //user ulanadigan kanal
-//                "/queue/private",
-//                response,
-//                headerAccessor.getMessageHeaders());
+        simpMessagingTemplate.convertAndSendToUser(
+                user.getId().toString(),
+                "/queue/private",
+                response);
 
-        simpMessagingTemplate.convertAndSend("/queue/message", response); //admin ulanadigan kanal
         return ResponseEntity.ok(response);
     }
+
+//    @PostMapping("/test")
+//    public ResponseEntity<ChatMessage> testWebSocket(@RequestBody ChatMessage request) {
+//        UUID testUserId = request.getUserId();
+//        String messageContent = request.getContent();
+//        ChatMessage response = new ChatMessage(testUserId, messageContent);
+//
+//
+//
+////        String destination = "/queue/" + testUserId.toString() + "/private";
+//
+//        simpMessagingTemplate.convertAndSendToUser(
+//                testUserId.toString(),
+//                "/queue/private",
+//                response
+//        );
+//        return ResponseEntity.ok(response);
+//    }
+
+
 
     @PostMapping("/send-to-user")
     public ResponseEntity<Chat> sentToUser(@RequestBody ChatMessageFromAdmin message) {
@@ -58,7 +80,6 @@ public class ChatController {
                 response,
                 headerAccessor.getMessageHeaders());
 
-//        simpMessagingTemplate.convertAndSend("/queue/message", response); //admin ulanadigan kanal
         return ResponseEntity.ok(response);
     }
 
