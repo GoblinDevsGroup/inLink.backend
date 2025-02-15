@@ -47,6 +47,7 @@ public class JwtUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))  // 24 hours
                 .claim("role", roles)
                 .claim("fullName", user.getFullName())
+                .claim("companyName", user.getCompanyName())
                 .claim("userId", userId)
                 .signWith(getKey())
                 .compact();

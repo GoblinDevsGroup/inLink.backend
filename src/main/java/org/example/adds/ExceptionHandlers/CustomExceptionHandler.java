@@ -26,19 +26,22 @@ public class CustomExceptionHandler {
     @ExceptionHandler(LinkExpiredException.class)
     public ResponseEntity<?> handle(LinkExpiredException ex, WebRequest request) {
         log.warn(ex.getMessage());
-        return ResponseEntity.status(410).body(ex.getMessage());
+        return ResponseEntity.status(410)
+                .body(new Response(ex.getMessage(), false));
     }
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<?> handle(NoSuchElementException ex, WebRequest request) {
         log.error(ex.getMessage());
-        return ResponseEntity.status(404).body(ex.getMessage());
+        return ResponseEntity.status(404)
+                .body(new Response(ex.getMessage(), false));
     }
 
     @ExceptionHandler(AllReadyExists.class)
     public ResponseEntity<?> handle(AllReadyExists ex, WebRequest request) {
         log.error(ex.getMessage());
-        return ResponseEntity.status(409).body(ex.getMessage());
+        return ResponseEntity.status(409)
+                .body(new Response(ex.getMessage(), false));
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -55,7 +58,8 @@ public class CustomExceptionHandler {
                 .map(error -> ((FieldError) error).getDefaultMessage())
                 .collect(Collectors.joining(", "));
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response(errors, false));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new Response(errors, false));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

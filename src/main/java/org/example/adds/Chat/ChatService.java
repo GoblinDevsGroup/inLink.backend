@@ -121,8 +121,8 @@ public class ChatService {
 
         List<Chat> chat = chatRepo.findByUserId(userId);
 
-        if (chat.isEmpty()){
-            throw new NoSuchElementException("Data not found");
+        if (chat.isEmpty()) {
+            return new ChatResponse();
         }
 
         List<MessageResponse> messages = chat.stream().map(
@@ -135,7 +135,7 @@ public class ChatService {
         ).collect(Collectors.toList());
 
         ChatResponse response = new ChatResponse();
-        response.setChatName(chat.get(chat.size()).getChatName());
+        response.setChatName(chat.get(chat.size()-1).getChatName());
         response.setMessages(messages);
 
         return response;

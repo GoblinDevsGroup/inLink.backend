@@ -74,15 +74,14 @@ public class Security {
                         ).hasRole("USER")
                         .requestMatchers(
                                 "/api/chat/send-to-user",
-                                "/api/chat/view-one/**",
-
                                 "/api/wallet/deposit",
                                 "/api/admin/getUser/transactions",
                                 "/api/admin/getUser",
                                 "/api/chat/get-all-chat",
                                 "/api/admin/get-all/adv"
                         ).hasRole("ADMIN")
-                        .requestMatchers("/api/transaction/get/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/transaction/get/**",
+                                "/api/chat/view-one/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
