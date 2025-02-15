@@ -22,7 +22,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/queue", "/topic", "/user");
+        /*
+        * /queue is for chatting,
+        * /user is needed to send a message to a specific user
+        * /notify is also for sending a notification to a specific user about payment actions or other else
+        * */
+        config.enableSimpleBroker("/queue", "/topic", "/user", "/notify");
         config.setApplicationDestinationPrefixes("/app");
         config.setUserDestinationPrefix("/user");
     }

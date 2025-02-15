@@ -1,10 +1,11 @@
-package org.example.adds.Contact;
+package org.example.adds.Chat;
 
 import lombok.AllArgsConstructor;
-import org.example.adds.Contact.Dto.ChatMessage;
-import org.example.adds.Contact.Dto.ChatMessageFromAdmin;
-import org.example.adds.Contact.Dto.ChatResponse;
-import org.example.adds.Contact.Dto.MessageResponse;
+import org.example.adds.Chat.Dto.ChatMessage;
+import org.example.adds.Chat.Dto.ChatMessageFromAdmin;
+import org.example.adds.Chat.Dto.ChatResponse;
+import org.example.adds.Chat.Dto.MessageResponse;
+import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersRepo;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class ChatService {
     private final UsersRepo usersRepo;
 
     public UUID adminId() {
-        return usersRepo.findByPhone("+998933592103").get().getId();
+        return usersRepo.findByUserRole(Users.UserRole.ROLE_ADMIN).getId();
     }
 
     public Chat saveMessageFromUser(ChatMessage request) {
@@ -116,9 +117,9 @@ public class ChatService {
                 .collect(Collectors.toList());
     }
 
-    public ChatResponse viewOneChat(String chatName) {
+    public ChatResponse viewOneChat(UUID userId) {
 
-        List<Chat> chat = chatRepo.findByChatName(chatName);
+        List<Chat> chat = chatRepo.findByUserId(userId);
 
         if (chat.isEmpty()){
             throw new NoSuchElementException("Data not found");
@@ -134,7 +135,7 @@ public class ChatService {
         ).collect(Collectors.toList());
 
         ChatResponse response = new ChatResponse();
-        response.setChatName(chatName);
+        response.setChatName(chat.get(chat.size()).getChatName());
         response.setMessages(messages);
 
         return response;

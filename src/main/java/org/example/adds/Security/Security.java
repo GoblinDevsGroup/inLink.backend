@@ -75,10 +75,11 @@ public class Security {
                         .requestMatchers(
                                 "/api/chat/send-to-user",
                                 "/api/chat/view-one/**",
-                                "/api/chat/get-all-chat",
+
                                 "/api/wallet/deposit",
                                 "/api/admin/getUser/transactions",
                                 "/api/admin/getUser",
+                                "/api/chat/get-all-chat",
                                 "/api/admin/get-all/adv"
                         ).hasRole("ADMIN")
                         .requestMatchers("/api/transaction/get/**").hasAnyRole("USER", "ADMIN")

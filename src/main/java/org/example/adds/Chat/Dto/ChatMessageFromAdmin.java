@@ -1,4 +1,4 @@
-package org.example.adds.Contact.Dto;
+package org.example.adds.Chat.Dto;
 
 import java.util.UUID;
 

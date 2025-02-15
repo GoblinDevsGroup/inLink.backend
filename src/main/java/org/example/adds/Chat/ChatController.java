@@ -1,9 +1,9 @@
-package org.example.adds.Contact;
+package org.example.adds.Chat;
 
 import lombok.AllArgsConstructor;
-import org.example.adds.Contact.Dto.ChatMessage;
-import org.example.adds.Contact.Dto.ChatMessageFromAdmin;
-import org.example.adds.Contact.Dto.ChatResponse;
+import org.example.adds.Chat.Dto.ChatMessage;
+import org.example.adds.Chat.Dto.ChatMessageFromAdmin;
+import org.example.adds.Chat.Dto.ChatResponse;
 import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersService;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,6 @@ import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -37,7 +36,7 @@ public class ChatController {
         headerAccessor.setLeaveMutable(true);
 
         simpMessagingTemplate.convertAndSendToUser(
-                user.getId().toString(),
+                chatService.adminId().toString(),
                 "/queue/private",
                 response);
 
@@ -55,10 +54,9 @@ public class ChatController {
         headerAccessor.setLeaveMutable(true);
 
         simpMessagingTemplate.convertAndSendToUser(
-                user.getPhone(), //user ulanadigan kanal
+                user.getId().toString(),
                 "/queue/private",
-                response,
-                headerAccessor.getMessageHeaders());
+                response);
 
         return ResponseEntity.ok(response);
     }
@@ -68,8 +66,8 @@ public class ChatController {
         return ResponseEntity.ok(chatService.findAllByGroup());
     }
 
-    @GetMapping("/view-one/{chatName}")
-    public ResponseEntity<ChatResponse> viewChat(@PathVariable String chatName) {
-        return ResponseEntity.ok(chatService.viewOneChat(chatName));
+    @GetMapping("/view-one/{userId}")
+    public ResponseEntity<ChatResponse> viewChat(@PathVariable UUID userId) {
+        return ResponseEntity.ok(chatService.viewOneChat(userId));
     }
 }

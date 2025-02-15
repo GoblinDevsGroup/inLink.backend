@@ -15,9 +15,11 @@ public class NotificationService {
     private SimpMessagingTemplate messagingTemplate;
 
     public void sendNotificationToUser(UUID userId, String message) {
-        String topic = "/user/" + userId + "/notify/notifications";
 
         //todo: save a notification to db
-        messagingTemplate.convertAndSend(topic, message);
+        messagingTemplate.convertAndSendToUser(
+                userId.toString(),
+                "/notify/sms",
+                message);
     }
 }
