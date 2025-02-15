@@ -44,26 +44,6 @@ public class ChatController {
         return ResponseEntity.ok(response);
     }
 
-//    @PostMapping("/test")
-//    public ResponseEntity<ChatMessage> testWebSocket(@RequestBody ChatMessage request) {
-//        UUID testUserId = request.getUserId();
-//        String messageContent = request.getContent();
-//        ChatMessage response = new ChatMessage(testUserId, messageContent);
-//
-//
-//
-////        String destination = "/queue/" + testUserId.toString() + "/private";
-//
-//        simpMessagingTemplate.convertAndSendToUser(
-//                testUserId.toString(),
-//                "/queue/private",
-//                response
-//        );
-//        return ResponseEntity.ok(response);
-//    }
-
-
-
     @PostMapping("/send-to-user")
     public ResponseEntity<Chat> sentToUser(@RequestBody ChatMessageFromAdmin message) {
         Chat response = chatService.saveMessageFromAdmin(message);

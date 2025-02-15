@@ -1,6 +1,5 @@
 package org.example.adds.WebSocket;
 
-import lombok.RequiredArgsConstructor;
 import org.example.adds.Security.JwtUtil;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -13,15 +12,13 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @CrossOrigin
 @EnableWebSocketMessageBroker
-//@RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final JwtUtil jwtUtil; // Inject JwtUtil
+    private final JwtUtil jwtUtil;
 
     public WebSocketConfig(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
-
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -33,9 +30,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/chat")
-                .setAllowedOrigins("https://sculpin-golden-bluejay.ngrok-free.app",
-                        "http://localhost:9000")
-               // .addInterceptors(new JwtHandshakeInterceptor(jwtUtil))
+                .setAllowedOriginPatterns("https://sculpin-golden-bluejay.ngrok-free.app",
+                        "http://localhost:9000",
+                        "http://localhost:3000",
+                        "http://localhost:50792",
+                        "http://192.168.137.253:3000",
+                        "http://192.168.137.253:50792",
+                        "http://127.0.0.1:5500",
+                        "http://172.16.15.112:3000")
                 .withSockJS();
     }
 

@@ -39,6 +39,7 @@
         // const socket = new SockJS("https://sculpin-golden-bluejay.ngrok-free.app/chat?token="+token);
         const socket = new SockJS("https://sculpin-golden-bluejay.ngrok-free.app/chat");
         stompClient = Stomp.over(socket);
+        //
         stompClient.connect({Authorization: `Bearer ${token}`}, function (frame) {
             console.log("Connected: " + frame);
 

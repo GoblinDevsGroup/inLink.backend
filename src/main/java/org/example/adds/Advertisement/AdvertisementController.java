@@ -81,7 +81,7 @@ public class AdvertisementController {
         }
     }
 
-    @GetMapping("/delete-view") // get method for deleting advertisement data
+    @GetMapping("/get-one") // get method for deleting advertisement data
     public ResponseEntity<AdvDeleteView> deleteView(@RequestBody DeleteRequest request){
         try {
             return ResponseEntity.ok(advertisementService.deleteView(request));
