@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.example.adds.Advertisement.AdStatus;
 import org.example.adds.Advertisement.Advertisement;
 import org.example.adds.Advertisement.AdvertisementRepo;
+import org.example.adds.Notification.NotificationService;
 import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersRepo;
 import org.example.adds.Wallet.Wallet;
@@ -22,6 +23,7 @@ import java.util.List;
 public class AutoCharging {
 
     private final WalletService walletService;
+    private final NotificationService notificationService;
     private final AdvertisementRepo advertisementRepo;
     private final UsersRepo usersRepo;
 
@@ -55,7 +57,9 @@ public class AutoCharging {
                 adv.setStatus(AdStatus.INACTIVE);
                 adv.setUpdatedAt(LocalDateTime.now());
                 advertisementRepo.save(adv);
-                //todo: implement sms sending feature to notify about failing in charging amount and being inactivated
+                notificationService.sendNotificationToUser(
+                        wallet.getUser().getId(),
+                        "payment failed, please check your balance");
             }
         }
 
