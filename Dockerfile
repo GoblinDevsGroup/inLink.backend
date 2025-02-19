@@ -1,19 +1,10 @@
 FROM openjdk:21-jdk AS builder
-
-# Set the working directory
 WORKDIR /app
-
-# Copy only the Gradle build files and wrapper to cache dependencies
+RUN apt-get update && apt-get install -y xargs
 COPY gradle/ gradle/
 COPY build.gradle settings.gradle gradlew ./
-
-# Download dependencies (caching)
 RUN ./gradlew dependencies
-
-# Copy the remaining application source code
 COPY src ./src
-
-# Build the application
 RUN ./gradlew clean build
 
 FROM openjdk:21-jdk
