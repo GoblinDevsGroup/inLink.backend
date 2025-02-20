@@ -114,4 +114,9 @@ public class Auth {
             this.success = success;
         }
     }
+
+    @GetMapping("/new")
+    public String test(){
+        return "";
+    }
 }
