@@ -1,14 +1,25 @@
-FROM openjdk:21-jdk AS builder
+FROM eclipse-temurin:21-jdk-jammy AS builder
 WORKDIR /app
-RUN apt-get update && apt-get install -y xargs
-COPY gradle/ gradle/
-COPY build.gradle settings.gradle gradlew ./
-RUN ./gradlew dependencies
-COPY src ./src
-RUN ./gradlew clean build
 
-FROM openjdk:21-jdk
+# Copy gradle files first for better layer caching
+COPY gradle/ gradle/
+COPY gradlew build.gradle settings.gradle ./
+
+# Download dependencies first (cached if no changes to build.gradle)
+RUN chmod +x ./gradlew && ./gradlew dependencies --no-daemon
+
+# Copy source code
+COPY src/ ./src/
+
+# Build the application
+RUN ./gradlew clean build --no-daemon
+
+# Runtime stage
+FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
-COPY build/libs/Adds-0.0.1-SNAPSHOT.jar myapp.jar
+
+# Copy the jar file from builder stage
+COPY --from=builder /app/build/libs/Adds-0.0.1-SNAPSHOT.jar myapp.jar
+
 EXPOSE 9000
 ENTRYPOINT ["java", "-jar", "myapp.jar"]
