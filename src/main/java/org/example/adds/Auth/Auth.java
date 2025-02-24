@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -115,8 +116,8 @@ public class Auth {
         }
     }
 
-    @GetMapping("/new")
-    public String test(){
-        return "";
+    @GetMapping("/update-role/{userId}")
+    public ResponseEntity<?> updateRole(@PathVariable UUID userId){
+        return ResponseEntity.ok("");
     }
 }

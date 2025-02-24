@@ -3,6 +3,10 @@ package org.example.adds.Wallet;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.example.adds.Admin.Dtos.WalletResponse;
+import org.example.adds.Advertisement.AdStatus;
+import org.example.adds.Advertisement.Advertisement;
+import org.example.adds.Advertisement.AdvertisementRepo;
 import org.example.adds.Notification.NotificationService;
 import org.example.adds.Payment.PaymentCheck;
 import org.example.adds.Payment.PaymentCheckRepo;
@@ -15,7 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -26,6 +32,7 @@ public class WalletService {
     private final WalletRepo walletRepo;
     private final TransactionService transactionService;
     private final UsersRepo usersRepo;
+    private final AdvertisementRepo advertisementRepo;
     private final PaymentCheckRepo paymentCheckRepo;
     private final NotificationService notificationService;
 
@@ -64,6 +71,7 @@ public class WalletService {
     @Transactional
     public void chargeFromWallet(Wallet wallet, BigDecimal amount) {
         BigDecimal updatedBalance = wallet.getBalance().subtract(amount);
+        wallet.setDaysLeft(daysLeft(wallet.getUser(), updatedBalance));
         wallet.setBalance(updatedBalance);
         wallet.setUpdatedAt(LocalDateTime.now());
         //todo: transfer charged amount into Admin wallet
@@ -83,6 +91,7 @@ public class WalletService {
                 .orElseThrow(() -> new NoSuchElementException("wallet not found"));
         BigDecimal currentBalance = wallet.getBalance();
         BigDecimal updatedBalance = currentBalance.add(request.amount());
+        wallet.setDaysLeft(daysLeft(wallet.getUser(), updatedBalance));
         wallet.setBalance(updatedBalance);
         wallet.setUpdatedAt(LocalDateTime.now());
         walletRepo.save(wallet);
@@ -95,6 +104,23 @@ public class WalletService {
                         "your current balance is " + updatedBalance);
 
         return new Response("updated user wallet", true);
+    }
+
+    private String daysLeft(Users user, BigDecimal updatedBalance) {
+        List<Advertisement> activeAdvList = getActiveAdv(user);
+        BigDecimal divisor = linkPrice.multiply(BigDecimal.valueOf(activeAdvList.size()));
+        if (divisor.compareTo(BigDecimal.ZERO) == 0) {
+            return "0";
+        }
+        return updatedBalance.divide(divisor, 2, RoundingMode.HALF_UP).toString();
+    }
+
+
+    public List<Advertisement> getActiveAdv(Users user) {
+        return advertisementRepo.findByUser(user)
+                .stream()
+                .filter(advertisement -> advertisement.getStatus() == AdStatus.ACTIVE)
+                .toList();
     }
 
     public Response sendPaymentCheck(UUID userId, MultipartFile file) {
@@ -123,5 +149,18 @@ public class WalletService {
         } catch (IOException e) {
             return new Response(e.getMessage(), false);
         }
+    }
+
+    public List<WalletResponse> getAllWallets() {
+        return walletRepo.findAll()
+                .stream()
+                .map(wallet -> new WalletResponse(
+                        wallet.getBalanceUuId(),
+                        wallet.getUser().getId(),
+                        wallet.getBalance(),
+                        wallet.getDaysLeft(),
+                        wallet.getCreatedAt(),
+                        wallet.getUpdatedAt()
+                )).toList();
     }
 }

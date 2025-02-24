@@ -12,7 +12,6 @@ import java.util.UUID;
 @Table
 @Data
 public class Users implements Serializable {
-
     @Id
     @GeneratedValue
     private UUID id;

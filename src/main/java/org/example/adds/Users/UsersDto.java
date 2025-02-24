@@ -25,7 +25,6 @@ public class UsersDto {
     @Column(nullable = false, unique = true)
     private String phone;
 
-
     @Column(nullable = false)
     private LocalDateTime createdAt;
 

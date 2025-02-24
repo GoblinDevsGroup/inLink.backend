@@ -13,10 +13,12 @@ import java.util.UUID;
 @Table
 @Data
 public class Wallet implements Serializable {
-
     @Id
     @GeneratedValue
     private UUID id;
+
+    @JoinColumn(nullable = false)
+    private String balanceUuId;
 
     @OneToOne
     @JoinColumn(nullable = false)
@@ -24,6 +26,9 @@ public class Wallet implements Serializable {
 
     @Column(nullable = false)
     private BigDecimal balance;
+
+    @JoinColumn(nullable = false)
+    private String daysLeft;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

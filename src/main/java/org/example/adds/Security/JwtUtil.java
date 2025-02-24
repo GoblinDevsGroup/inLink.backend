@@ -8,6 +8,8 @@ import io.jsonwebtoken.security.Keys;
 import org.example.adds.Auth.Dto.TokenResponse;
 import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersRepo;
+import org.example.adds.Wallet.Wallet;
+import org.example.adds.Wallet.WalletRepo;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,10 +26,12 @@ import java.util.stream.Collectors;
 public class JwtUtil {
     private final UserDetailsService userDetailsService;
     private final UsersRepo usersRepo;
+    private final WalletRepo walletRepo;
 
-    public JwtUtil(UserDetailsService userDetailsService, UsersRepo usersRepo) {
+    public JwtUtil(UserDetailsService userDetailsService, UsersRepo usersRepo, WalletRepo walletRepo) {
         this.userDetailsService = userDetailsService;
         this.usersRepo = usersRepo;
+        this.walletRepo = walletRepo;
     }
 
 
@@ -35,6 +39,9 @@ public class JwtUtil {
         // Fetch userId from your user service or repository
         Users user = usersRepo.findByPhone(userDetails.getUsername())
                 .orElseThrow(()->new NoSuchElementException("error in fetching user data"));
+
+        Wallet wallet = walletRepo.findByUser(user)
+                .orElseThrow(()->new NoSuchElementException("user wallet not found"));
         UUID userId = user.getId();
 
         String roles = userDetails.getAuthorities().stream()
@@ -49,6 +56,7 @@ public class JwtUtil {
                 .claim("fullName", user.getFullName())
                 .claim("companyName", user.getCompanyName())
                 .claim("userId", userId)
+                .claim("balanceUuId", wallet.getBalanceUuId())
                 .signWith(getKey())
                 .compact();
         return new TokenResponse(accessToken, user.getFullName());

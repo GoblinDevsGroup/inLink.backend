@@ -37,11 +37,7 @@ public class AutoCharging {
     }
 
     private void charging(Users user) {
-        List<Advertisement> activeAdvList = advertisementRepo.findByUser(user)
-                .stream()
-                .filter(advertisement -> advertisement.getStatus() == AdStatus.ACTIVE)
-                .toList();
-
+        List<Advertisement> activeAdvList = walletService.getActiveAdv(user);
         Wallet wallet = walletService.getWallet(user);
 
         if (wallet.getBalance().compareTo(

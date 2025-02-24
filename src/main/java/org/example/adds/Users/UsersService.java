@@ -50,14 +50,21 @@ public class UsersService {
         if (walletRepo.existsByUser(user)) {
             throw new AllReadyExists("wallet already exists");
         } else {
+            String balanceUuId = generateUuId();
             Wallet wallet = new Wallet();
             wallet.setUser(user);
+            wallet.setBalanceUuId(balanceUuId);
             wallet.setBalance(BigDecimal.valueOf(5000.00));
             wallet.setCreatedAt(LocalDateTime.now());
             wallet.setUpdatedAt(LocalDateTime.now());
             walletRepo.save(wallet);
         }
     }
+
+    private String generateUuId() {
+        Random random = new Random();
+        int number = 10000000 + random.nextInt(90000000);
+        return "U" + number;    }
 
     private boolean isPhoneValid(String phone) {
         final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("\\+998\\d{9}");

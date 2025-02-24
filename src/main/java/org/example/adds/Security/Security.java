@@ -77,6 +77,7 @@ public class Security {
                                 "/api/wallet/deposit",
                                 "/api/admin/getUser/transactions",
                                 "/api/admin/getUser",
+                                "/api/admin/all-wallets",
                                 "/api/chat/get-all-chat",
                                 "/api/admin/get-all/adv"
                         ).hasRole("ADMIN")
