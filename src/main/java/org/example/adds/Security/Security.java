@@ -59,6 +59,7 @@ public class Security {
                                 "/api/auth/forgot/verify",
                                 "/api/auth/forgot",
                                 "/api/auth/reset",
+                                "/api/auth/update-role",
                                 "/api/auth/resend-sms",
                                 "/api/adv/get/**",
                                 "/api/chat/send-to-admin"

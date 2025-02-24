@@ -39,6 +39,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         "http://localhost:9000",
                         "http://localhost:3000",
                         "http://51.20.142.143:3000",
+                        "http://51.20.142.143:9000",
                         "http://localhost:50792",
                         "http://192.168.137.253:3000",
                         "http://192.168.137.253:50792",

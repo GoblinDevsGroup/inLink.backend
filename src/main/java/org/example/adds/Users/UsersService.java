@@ -3,6 +3,7 @@ package org.example.adds.Users;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.example.adds.Auth.Dto.*;
+import org.example.adds.Auth.UpdateRole;
 import org.example.adds.DraftUser.DraftUserRepo;
 import org.example.adds.DraftUser.DraftUsers;
 import org.example.adds.ExceptionHandlers.AllReadyExists;
@@ -238,5 +239,13 @@ public class UsersService {
         return this.usersMapper.toDto(
                 usersRepo.findById(userId)
                         .orElseThrow(() -> new NoSuchElementException("user not found")));
+    }
+
+    public void updateRole(UpdateRole request) {
+        Users user = usersRepo.findById(request.userId())
+                .orElseThrow(() -> new NoSuchElementException("user not found"));
+
+        user.setUserRole(request.newRole());
+        usersRepo.save(user);
     }
 }

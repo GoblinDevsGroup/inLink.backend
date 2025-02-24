@@ -116,8 +116,9 @@ public class Auth {
         }
     }
 
-    @GetMapping("/update-role/{userId}")
-    public ResponseEntity<?> updateRole(@PathVariable UUID userId){
-        return ResponseEntity.ok("");
+    @PatchMapping("/update-role")
+    public ResponseEntity<Response> updateRole(@RequestBody UpdateRole request){
+        usersService.updateRole(request);
+        return ResponseEntity.ok(new Response("updated", true));
     }
 }
