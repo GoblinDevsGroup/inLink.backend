@@ -26,7 +26,7 @@ public class ChatController {
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     @PostMapping("/send-to-admin")
-    public ResponseEntity<Chat> sentToAdmin(@RequestBody ChatMessage message) {
+    public ResponseEntity<MessageFromUser> sentToAdmin(@RequestBody ChatMessage message) {
         Chat response = chatService.saveMessageFromUser(message);
         Users user = usersService.findById(message.getUserId());
 
@@ -40,7 +40,7 @@ public class ChatController {
                 "/queue/private",
                 response);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new MessageFromUser(response));
     }
 
     @PostMapping("/send-to-user")

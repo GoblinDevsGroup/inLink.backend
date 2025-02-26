@@ -1,4 +1,4 @@
-package org.example.adds.Auth;
+package org.example.adds.Auth.Dto;
 
 import org.example.adds.Users.Users;
 

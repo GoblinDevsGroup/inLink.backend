@@ -61,17 +61,17 @@ public class Security {
                                 "/api/auth/reset",
                                 "/api/auth/update-role",
                                 "/api/auth/resend-sms",
-                                "/api/adv/get/**",
-                                "/api/chat/send-to-admin"
+                                "/api/adv/get/**"
                         ).permitAll()
                         .requestMatchers(
                                 "/api/adv/create-link/**",
                                 "/api/adv/get-by/**",
                                 "/api/adv/delete",
-                                "/api/adv/delete-view",
+                                "/api/adv/get-one",
                                 "/api/adv/update-status",
                                 "/api/qrcode/create/**",
-                                "/api/qrcode/download/**"
+                                "/api/qrcode/download/**",
+                                "/api/chat/send-to-admin"
                         ).hasRole("USER")
                         .requestMatchers(
                                 "/api/chat/send-to-user",

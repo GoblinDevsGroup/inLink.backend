@@ -35,7 +35,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/chat")
-                .setAllowedOriginPatterns("https://sculpin-golden-bluejay.ngrok-free.app",
+                .setAllowedOriginPatterns(
+                        "https://sculpin-golden-bluejay.ngrok-free.app",
                         "http://localhost:9000",
                         "http://localhost:3000",
                         "http://51.20.142.143:3000",

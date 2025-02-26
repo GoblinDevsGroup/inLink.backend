@@ -3,7 +3,7 @@ package org.example.adds.Users;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.example.adds.Auth.Dto.*;
-import org.example.adds.Auth.UpdateRole;
+import org.example.adds.Auth.Dto.UpdateRole;
 import org.example.adds.DraftUser.DraftUserRepo;
 import org.example.adds.DraftUser.DraftUsers;
 import org.example.adds.ExceptionHandlers.AllReadyExists;

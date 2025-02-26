@@ -3,6 +3,7 @@ package org.example.adds.Visitors;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.example.adds.Advertisement.AdStatus;
 import org.example.adds.Advertisement.Advertisement;
 import org.example.adds.Advertisement.AdvertisementService;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -45,8 +46,9 @@ public class VisitorsService {
             visitor.setAdvertisement(adv);
             visitor.setVisitedAt(LocalDateTime.now());
             visitorsRepo.save(visitor);
-            adv.setVisitorNumber(adv.getVisitorNumber() + 1);
-
+            if (adv.getStatus().equals(AdStatus.ACTIVE)) {
+                adv.setVisitorNumber(adv.getVisitorNumber() + 1);
+            }
             simpMessagingTemplate.convertAndSendToUser(
                     adv.getUser().getPhone(),
                     "/panel/visitor/count",
