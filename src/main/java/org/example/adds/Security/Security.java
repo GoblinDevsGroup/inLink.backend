@@ -70,20 +70,18 @@ public class Security {
                                 "/api/adv/get-one",
                                 "/api/adv/update-status",
                                 "/api/qrcode/create/**",
-                                "/api/qrcode/download/**",
-                                "/api/chat/send-to-admin"
+                                "/api/qrcode/download/**"
                         ).hasRole("USER")
                         .requestMatchers(
-                                "/api/chat/send-to-user",
                                 "/api/wallet/deposit",
                                 "/api/admin/getUser/transactions",
                                 "/api/admin/getUser",
                                 "/api/admin/all-wallets",
-                                "/api/chat/get-all-chat",
                                 "/api/admin/get-all/adv"
                         ).hasRole("ADMIN")
                         .requestMatchers("/api/transaction/get/**",
-                                "/api/chat/view-one/**").hasAnyRole("USER", "ADMIN")
+                                "/api/chat/send",
+                                "/api/chat/get-chats/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)

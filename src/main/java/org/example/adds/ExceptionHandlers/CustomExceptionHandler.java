@@ -47,7 +47,7 @@ public class CustomExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Response> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new Response("The phone number is already in use. Please use a different number.", false));
+                .body(new Response(ex.getMessage(), false));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
