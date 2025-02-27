@@ -2,6 +2,7 @@ package org.example.adds.Chat;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.example.adds.Users.Users;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -16,18 +17,32 @@ public class Chat implements Serializable {
     @GeneratedValue
     private UUID id;
 
-    @Column
-    private String chatName;
+    @ManyToOne
+    @JoinColumn(name = "sender_id")
+    private Users sender;
 
-    @Column
-    private UUID userId;
-
-    @Column
-    private UUID adminId;
+    @ManyToOne
+    @JoinColumn(name = "receiver_id")
+    private Users receiver;
 
     @Column
     private String message;
 
+    @Lob
+    @Column
+    private byte[] file;
+
     @Column
     private LocalDateTime time;
+
+    public Chat(Users sender,
+                Users receiver,
+                String message) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.message = message;
+        this.time = LocalDateTime.now();
+    }
+
+    public Chat() {}
 }
