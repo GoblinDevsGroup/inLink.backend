@@ -10,11 +10,12 @@ import org.example.adds.Users.UsersService;
 import org.example.adds.Transactions.Transaction;
 import org.example.adds.Transactions.TransactionService;
 import org.example.adds.Wallet.WalletService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -50,5 +51,12 @@ public class AdminController {
     @GetMapping("/all-wallets")
     public ResponseEntity<List<WalletResponse>> getAllWallets(){
         return ResponseEntity.ok(walletService.getAllWallets());
+    }
+
+    @GetMapping("/get-all/users")
+    public ResponseEntity<Page<UsersDto>> getAllUsersWithPageable(
+            @RequestParam(value = "searchText", required = false) String searchText,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
+        return ResponseEntity.ok(usersService.findBySearchingTextAndPageable(searchText, pageable));
     }
 }

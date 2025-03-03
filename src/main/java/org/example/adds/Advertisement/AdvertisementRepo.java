@@ -21,8 +21,6 @@ public interface AdvertisementRepo extends JpaRepository<Advertisement, UUID>, J
 
     List<Advertisement> findByUser(Users users);
 
-    Page<Advertisement> findByUser(Users user, Pageable pageable);
-
 
     static Specification<Advertisement> searchSpecification(@Nullable String searchText){
         return (root, query, builder) -> {

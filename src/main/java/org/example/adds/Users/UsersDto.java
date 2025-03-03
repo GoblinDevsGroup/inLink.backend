@@ -1,33 +1,28 @@
 package org.example.adds.Users;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class UsersDto {
-
-    @Column(nullable = false)
     private UUID id;
-
-    @Column(nullable = false)
     private String fullName;
-
-    @Column(nullable = false)
     private String companyName;
-
-    @Column(nullable = false, unique = true)
+    private String cashId;
     private String phone;
+    public UsersDto() {
+    }
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
+    public UsersDto(UUID id,
+                    String fullName,
+                    String companyName,
+                    String cashId,
+                    String phone) {
+        this.id = id;
+        this.fullName = fullName;
+        this.companyName = companyName;
+        this.cashId = cashId;
+        this.phone = phone;
+    }
 }

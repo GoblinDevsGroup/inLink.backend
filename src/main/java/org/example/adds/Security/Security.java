@@ -61,7 +61,8 @@ public class Security {
                                 "/api/auth/reset",
                                 "/api/auth/update-role",
                                 "/api/auth/resend-sms",
-                                "/api/adv/get/**"
+                                "/api/adv/get/**",
+                                "/api/admin/get-all/users"
                         ).permitAll()
                         .requestMatchers(
                                 "/api/adv/create-link/**",

@@ -10,6 +10,6 @@ import java.util.UUID;
 
 @Repository
 public interface ChatRepo extends JpaRepository<Chat, UUID> {
-    @Query("select c from Chat c where c.sender.id=:userId or c.receiver.id=:userId order by c.time desc")
+    @Query("select c from Chat c where c.sender.id=:userId or c.receiver.id=:userId order by c.time asc")
     List<Chat> findChatsByUserId(@Param("userId") UUID userId);
 }

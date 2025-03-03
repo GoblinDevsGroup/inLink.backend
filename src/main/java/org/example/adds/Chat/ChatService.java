@@ -57,15 +57,26 @@ public class ChatService {
                 : usersRepo.findById(request.receiverId())
                 .orElseThrow(() -> new NoSuchElementException("Receiver not found"));
 
-        saveMessage(new Chat(sender, receiver, request.message()));
+        ChatResponse response = saveMessage(new Chat(sender, receiver, request.message()));
 
         simpMessagingTemplate.convertAndSendToUser(
                 receiver.getId().toString(),
                 "/queue/private",
-                request.message());
+                response);
+
+        simpMessagingTemplate.convertAndSendToUser(
+                sender.getId().toString(),
+                "/queue/private",
+                response);
     }
 
-    private void saveMessage(Chat chat) {
-        chatRepo.save(chat);
+    private ChatResponse saveMessage(Chat chat) {
+        Chat chat1 = chatRepo.save(chat);
+        return new ChatResponse(
+                chat1.getId(),
+                chat1.getSender().getUserRole(),
+                chat1.getMessage(),
+                chat1.getTime()
+        );
     }
 }

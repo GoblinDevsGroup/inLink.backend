@@ -11,6 +11,9 @@ import org.example.adds.Response;
 import org.example.adds.Sms.SmsSender;
 import org.example.adds.Wallet.Wallet;
 import org.example.adds.Wallet.WalletRepo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -236,9 +239,10 @@ public class UsersService {
     }
 
     public UsersDto getUserById(UUID userId) {
-        return this.usersMapper.toDto(
-                usersRepo.findById(userId)
-                        .orElseThrow(() -> new NoSuchElementException("user not found")));
+
+        Wallet wallet = walletRepo.findByUser_Id(userId)
+                .orElseThrow(()->new NoSuchElementException("wallet not found"));
+        return this.usersMapper.toDto(wallet.getUser(), wallet.getBalanceUuId());
     }
 
     public void updateRole(UpdateRole request) {
@@ -247,5 +251,24 @@ public class UsersService {
 
         user.setUserRole(request.newRole());
         usersRepo.save(user);
+    }
+
+    public Page<UsersDto> findBySearchingTextAndPageable(String searchText, Pageable pageable) {
+        Specification<Users> spec = Specification
+                .where(UsersRepo.searchSpecification(searchText));
+
+        Page<Users> page = usersRepo.findAll(spec, pageable);
+        return page.map(user -> {
+                    String cashId = walletRepo.findByUser(user)
+                            .map(Wallet::getBalanceUuId)
+                            .orElse(null);
+                    return new UsersDto(
+                            user.getId(),
+                            user.getFullName(),
+                            user.getCompanyName(),
+                            cashId,
+                            user.getPhone()
+                    );
+                });
     }
 }
