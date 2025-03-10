@@ -3,6 +3,7 @@ package org.example.adds.Advertisement;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.apache.coyote.BadRequestException;
+import org.example.adds.Admin.Dtos.AdvResponseForAdmin;
 import org.example.adds.Advertisement.Dto.*;
 import org.example.adds.ExceptionHandlers.PermissionDenied;
 import org.example.adds.Response;
@@ -71,16 +72,26 @@ public class AdvertisementService {
                 .orElseThrow(() -> new NoSuchElementException("Link not found"));
     }
 
-    public Page<AdvResponse> getAdvByUserIdWithSearchingAndPageable(UUID userId,
+    public Page<AdvResponseForAdmin> getAdvByUserIdWithSearchingAndPageable(UUID userId,
                                                                     String searchText,
                                                                     Pageable pageable) {
         Specification<Advertisement> spec = Specification
                 .where(AdvertisementRepo.searchSpecification(searchText))
                 .and(AdvertisementRepo.hasUserId(userId));
 
-        Page<Advertisement> advPage = advertisementRepo.findAll(spec, pageable);
+        Page<Advertisement> advPages = advertisementRepo.findAll(spec, pageable);
 
-        return advPage.map(mapper::toResponse);
+        return advPages.map(advertisement -> new AdvResponseForAdmin(
+                advertisement.getId(),
+                advertisement.getTitle(),
+                advertisement.getUser().getFullName(),
+                advertisement.getStatus(),
+                advertisement.getAdvLink(),
+                advertisement.getMainLink(),
+                advertisement.getVisitorNumber(),
+                advertisement.getCreatedAt(),
+                advertisement.getUpdatedAt()
+        ));
     }
 
 
@@ -169,9 +180,22 @@ public class AdvertisementService {
         return new Response("Inactivated successfully", true);
     }
 
-    public List<AdvResponse> getAllAdv() {
-        return this.advertisementRepo.findAll().stream()
-                .map(this.mapper::toResponse)
-                .toList();
+    public Page<AdvResponseForAdmin> getAllByWithSearchingAndPageable(String searchText, Pageable pageable) {
+        Specification<Advertisement> spec = Specification
+                .where(AdvertisementRepo.searchSpecification(searchText));
+
+        Page<Advertisement> advPage = advertisementRepo.findAll(spec, pageable);
+
+        return advPage.map(advertisement -> new AdvResponseForAdmin(
+                advertisement.getId(),
+                advertisement.getTitle(),
+                advertisement.getUser().getFullName(),
+                advertisement.getStatus(),
+                advertisement.getAdvLink(),
+                advertisement.getMainLink(),
+                advertisement.getVisitorNumber(),
+                advertisement.getCreatedAt(),
+                advertisement.getUpdatedAt()
+        ));
     }
 }

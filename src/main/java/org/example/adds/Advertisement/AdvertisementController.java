@@ -3,6 +3,7 @@ package org.example.adds.Advertisement;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.apache.coyote.BadRequestException;
+import org.example.adds.Admin.Dtos.AdvResponseForAdmin;
 import org.example.adds.Advertisement.Dto.*;
 import org.example.adds.Response;
 import org.example.adds.Visitors.VisitorsService;
@@ -58,7 +59,7 @@ public class AdvertisementController {
     }
 
     @GetMapping("/get-by/{userId}")
-    public ResponseEntity<Page<AdvResponse>> getAdvByUserIdWithSearchingAndPageable(
+    public ResponseEntity<Page<AdvResponseForAdmin>> getAdvByUserIdWithSearchingAndPageable(
             @PathVariable UUID userId,
             @RequestParam(value = "searchText", required = false) String searchText,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {

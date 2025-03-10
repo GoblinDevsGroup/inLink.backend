@@ -17,6 +17,5 @@ public class UsersMapper {
         usersDto.setCashId(cashId);
         usersDto.setCompanyName(user.getCompanyName());
         return usersDto;
-
     }
 }

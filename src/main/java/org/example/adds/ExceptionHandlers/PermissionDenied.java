@@ -1,6 +1,8 @@
 package org.example.adds.ExceptionHandlers;
 
-public class PermissionDenied extends RuntimeException{
+import jakarta.servlet.Servlet;
+
+public class PermissionDenied extends RuntimeException {
     public PermissionDenied(String message) {
     }
 }

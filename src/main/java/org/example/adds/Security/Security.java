@@ -61,8 +61,7 @@ public class Security {
                                 "/api/auth/reset",
                                 "/api/auth/update-role",
                                 "/api/auth/resend-sms",
-                                "/api/adv/get/**",
-                                "/api/admin/get-all/users"
+                                "/api/adv/get/**"
                         ).permitAll()
                         .requestMatchers(
                                 "/api/adv/create-link/**",
@@ -78,11 +77,16 @@ public class Security {
                                 "/api/admin/getUser/transactions",
                                 "/api/admin/getUser",
                                 "/api/admin/all-wallets",
-                                "/api/admin/get-all/adv"
+                                "/api/admin/get-all/adv",
+                                "/api/admin/delete/user/**",
+                                "/api/admin/edit-user/**",
+                                "/api/admin/get-all/users"
                         ).hasRole("ADMIN")
                         .requestMatchers("/api/transaction/get/**",
                                 "/api/chat/send",
-                                "/api/chat/get-chats/**").hasAnyRole("USER", "ADMIN")
+                                "/api/chat/get-chats/**",
+                                "/api/chat/edit/**"
+                        ).hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)

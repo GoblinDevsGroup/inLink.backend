@@ -1,9 +1,12 @@
 package org.example.adds.Admin;
 
 import lombok.AllArgsConstructor;
+import org.example.adds.Admin.Dtos.AdvResponseForAdmin;
+import org.example.adds.Admin.Dtos.EditUser;
 import org.example.adds.Admin.Dtos.WalletResponse;
 import org.example.adds.Advertisement.AdvertisementService;
 import org.example.adds.Advertisement.Dto.AdvResponse;
+import org.example.adds.Response;
 import org.example.adds.Users.Users;
 import org.example.adds.Users.UsersDto;
 import org.example.adds.Users.UsersService;
@@ -34,8 +37,11 @@ public class AdminController {
         return ResponseEntity.ok(this.usersService.getAllUsers());
     }
     @GetMapping("/get-all/adv")
-    public ResponseEntity<List<AdvResponse>> getAllAdvertisements() {
-        return ResponseEntity.ok(this.advertisementService.getAllAdv());
+    public ResponseEntity<Page<AdvResponseForAdmin>> getAllAdvertisements(
+            @RequestParam(value = "searchText", required = false) String searchText,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return ResponseEntity.ok(advertisementService.getAllByWithSearchingAndPageable(searchText, pageable));
     }
 
     @GetMapping("/getUser/transactions")
@@ -56,7 +62,28 @@ public class AdminController {
     @GetMapping("/get-all/users")
     public ResponseEntity<Page<UsersDto>> getAllUsersWithPageable(
             @RequestParam(value = "searchText", required = false) String searchText,
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ){
         return ResponseEntity.ok(usersService.findBySearchingTextAndPageable(searchText, pageable));
     }
+
+    @DeleteMapping("/delete/user/{userId}")
+    public ResponseEntity<Response> deleteUser(@PathVariable UUID userId){
+        usersService.deleteUser(userId);
+        return ResponseEntity.ok(new Response("deleted", true));
+    }
+
+    @PatchMapping("/edit-user/{userId}")
+    public ResponseEntity<Response> editUser(@PathVariable UUID userId,
+                                             @RequestBody EditUser request){
+        usersService.editUser(userId, request);
+        return ResponseEntity.ok(new Response("user updated", true));
+    }
+
+//    @PatchMapping("/edit-adv/{advId}")
+//    public ResponseEntity<Response> editAdv(@PathVariable UUID advId,
+//                                            @RequestBody ){
+//        advertisementService.editAdvByAdmin(advId)
+//        return ResponseEntity.ok(new Response("updated", true));
+//    }
 }

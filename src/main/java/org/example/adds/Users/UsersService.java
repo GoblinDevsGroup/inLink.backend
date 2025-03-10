@@ -2,6 +2,7 @@ package org.example.adds.Users;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.example.adds.Admin.Dtos.EditUser;
 import org.example.adds.Auth.Dto.*;
 import org.example.adds.Auth.Dto.UpdateRole;
 import org.example.adds.DraftUser.DraftUserRepo;
@@ -270,5 +271,18 @@ public class UsersService {
                             user.getPhone()
                     );
                 });
+    }
+
+    public void deleteUser(UUID userId) {
+        usersRepo.deleteById(userId);
+    }
+
+    public void editUser(UUID userId, EditUser request) {
+        Users user = usersRepo.findById(userId)
+                .orElseThrow(()->new NoSuchElementException("user found"));
+
+        user.setCompanyName(request.companyName());
+        user.setFullName(request.fullName());
+        usersRepo.save(user);
     }
 }

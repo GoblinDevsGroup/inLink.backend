@@ -12,7 +12,6 @@ import java.util.UUID;
 @Table
 @Data
 public class Chat implements Serializable {
-
     @Id
     @GeneratedValue
     private UUID id;
@@ -25,15 +24,40 @@ public class Chat implements Serializable {
     @JoinColumn(name = "receiver_id")
     private Users receiver;
 
-    @Column
+    @JoinColumn(columnDefinition = "TEXT")
     private String message;
 
-    @Lob
-    @Column
-    private byte[] file;
+    @JoinColumn
+    @OneToOne(fetch = FetchType.LAZY)
+    private Files file;
 
     @Column
-    private LocalDateTime time;
+    private LocalDateTime createdAt;
+
+    @JoinColumn
+    private LocalDateTime updatedAt;
+
+    public Chat(Users sender,
+                Users receiver,
+                String message,
+                Files file) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.message = message;
+        this.file = file;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public Chat(Users sender,
+                Users receiver,
+                Files file) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.file = file;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 
     public Chat(Users sender,
                 Users receiver,
@@ -41,8 +65,10 @@ public class Chat implements Serializable {
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
-        this.time = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
-    public Chat() {}
+    public Chat() {
+    }
 }
