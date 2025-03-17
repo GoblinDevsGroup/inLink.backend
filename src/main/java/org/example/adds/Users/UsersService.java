@@ -69,7 +69,8 @@ public class UsersService {
     private String generateUuId() {
         Random random = new Random();
         int number = 10000000 + random.nextInt(90000000);
-        return "U" + number;    }
+        return "U" + number;
+    }
 
     private boolean isPhoneValid(String phone) {
         final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("\\+998\\d{9}");
@@ -242,7 +243,7 @@ public class UsersService {
     public UsersDto getUserById(UUID userId) {
 
         Wallet wallet = walletRepo.findByUser_Id(userId)
-                .orElseThrow(()->new NoSuchElementException("wallet not found"));
+                .orElseThrow(() -> new NoSuchElementException("wallet not found"));
         return this.usersMapper.toDto(wallet.getUser(), wallet.getBalanceUuId());
     }
 
@@ -260,29 +261,49 @@ public class UsersService {
 
         Page<Users> page = usersRepo.findAll(spec, pageable);
         return page.map(user -> {
-                    String cashId = walletRepo.findByUser(user)
-                            .map(Wallet::getBalanceUuId)
-                            .orElse(null);
-                    return new UsersDto(
-                            user.getId(),
-                            user.getFullName(),
-                            user.getCompanyName(),
-                            cashId,
-                            user.getPhone()
-                    );
-                });
+            String cashId = walletRepo.findByUser(user)
+                    .map(Wallet::getBalanceUuId)
+                    .orElse(null);
+            return new UsersDto(
+                    user.getId(),
+                    user.getFullName(),
+                    user.getCompanyName(),
+                    cashId,
+                    user.getPhone()
+            );
+        });
     }
 
+    @Transactional
     public void deleteUser(UUID userId) {
+        walletRepo.deleteByUser_Id(userId);
         usersRepo.deleteById(userId);
     }
 
     public void editUser(UUID userId, EditUser request) {
         Users user = usersRepo.findById(userId)
-                .orElseThrow(()->new NoSuchElementException("user found"));
+                .orElseThrow(() -> new NoSuchElementException("user found"));
 
         user.setCompanyName(request.companyName());
         user.setFullName(request.fullName());
         usersRepo.save(user);
+    }
+
+    @Transactional
+    public Response createUser(SignUpRequest newUser) {
+        Users user = new Users(newUser.getFullName(),
+                newUser.getCompanyName(),
+                newUser.getPhone(),
+                passwordEncoder.encode(newUser.getPassword()));
+
+        Users savedUser = usersRepo.save(user);
+
+        Wallet wallet = new Wallet(
+                generateUuId(),
+                savedUser,
+                BigDecimal.valueOf(5000.00)
+        );
+        walletRepo.save(wallet);
+        return new Response("saved", true);
     }
 }

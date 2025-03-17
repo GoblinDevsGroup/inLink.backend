@@ -43,9 +43,9 @@ public class Advertisement implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Users user;
 
-    @Lob
-    @JoinColumn
-    private byte[] qrCode;
+//    @Lob
+//    @JoinColumn
+//    private byte[] qrCode;
 
     @JoinColumn
     private LocalDateTime updatedAt;
@@ -58,7 +58,6 @@ public class Advertisement implements Serializable {
                          int visitorNumber,
                          LocalDateTime createdAt,
                          Users user,
-                         byte[] qrCode,
                          LocalDateTime updatedAt) {
         this.id = id;
         this.title = title;
@@ -68,7 +67,6 @@ public class Advertisement implements Serializable {
         VisitorNumber = visitorNumber;
         this.createdAt = createdAt;
         this.user = user;
-        this.qrCode = qrCode;
         this.updatedAt = updatedAt;
     }
     public Advertisement() {

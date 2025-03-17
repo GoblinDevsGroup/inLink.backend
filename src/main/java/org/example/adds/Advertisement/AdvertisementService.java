@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.example.adds.Admin.Dtos.AdvResponseForAdmin;
+import org.example.adds.Admin.Dtos.EditAdvRequest;
 import org.example.adds.Advertisement.Dto.*;
 import org.example.adds.ExceptionHandlers.PermissionDenied;
 import org.example.adds.Response;
@@ -94,6 +95,26 @@ public class AdvertisementService {
         ));
     }
 
+    public Page<AdvResponseForAdmin> getAdvByWithSearchingAndPageable(String searchText,
+                                                                            Pageable pageable) {
+        Specification<Advertisement> spec = Specification
+                .where(AdvertisementRepo.searchSpecification(searchText));
+
+        Page<Advertisement> advPages = advertisementRepo.findAll(spec, pageable);
+
+        return advPages.map(advertisement -> new AdvResponseForAdmin(
+                advertisement.getId(),
+                advertisement.getTitle(),
+                advertisement.getUser().getFullName(),
+                advertisement.getStatus(),
+                advertisement.getAdvLink(),
+                advertisement.getMainLink(),
+                advertisement.getVisitorNumber(),
+                advertisement.getCreatedAt(),
+                advertisement.getUpdatedAt()
+        ));
+    }
+
 
     public AdvResponse editAdv(EditAdv request) {
         Advertisement adv = advertisementRepo.findById(request.advId())
@@ -109,6 +130,18 @@ public class AdvertisementService {
             throw new RuntimeException("permission denied");
     }
 
+    public Response editAdv(EditAdvRequest request) {
+        Advertisement adv = advertisementRepo.findById(request.advId())
+                .orElseThrow(() -> new NoSuchElementException("adv not found"));
+
+            adv.setTitle(request.title());
+            adv.setStatus(request.status());
+            adv.setUpdatedAt(LocalDateTime.now());
+            advertisementRepo.save(adv);
+
+            return new Response("updated", true);
+    }
+
     public void deleteAdv(DeleteRequest request) {
         Advertisement adv = advertisementRepo.findById(request.advId())
                 .orElseThrow(() -> new NoSuchElementException("adv not found"));
@@ -116,6 +149,14 @@ public class AdvertisementService {
         if (adv.getUser().getId().equals(request.userId())) {
             advertisementRepo.delete(adv);
         }
+    }
+
+    public Response deleteAdv(UUID advId) {
+        Advertisement adv = advertisementRepo.findById(advId)
+                .orElseThrow(() -> new NoSuchElementException("adv not found"));
+
+        advertisementRepo.delete(adv);
+        return new Response("deleted", true);
     }
 
     public AdvDeleteView deleteView(DeleteRequest request) throws BadRequestException {
@@ -197,5 +238,18 @@ public class AdvertisementService {
                 advertisement.getCreatedAt(),
                 advertisement.getUpdatedAt()
         ));
+    }
+
+    public AdvEditResponse getAdvData(UUID advId) {
+        Advertisement advertisement = advertisementRepo.findById(advId)
+                .orElseThrow(()->new NoSuchElementException("adv not found"));
+
+        return new AdvEditResponse(
+                advertisement.getId(),
+                advertisement.getUser().getFullName(),
+                advertisement.getStatus(),
+                advertisement.getAdvLink(),
+                advertisement.getMainLink()
+                );
     }
 }

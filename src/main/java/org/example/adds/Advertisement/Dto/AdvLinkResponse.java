@@ -12,7 +12,11 @@ public class AdvLinkResponse {
     private String advLink;
     private String mainLink;
 
-    public AdvLinkResponse(UUID id, UUID userId, String title, String advLink, String mainLink) {
+    public AdvLinkResponse(UUID id,
+                           UUID userId,
+                           String title,
+                           String advLink,
+                           String mainLink) {
         this.id = id;
         this.userId = userId;
         this.title = title;

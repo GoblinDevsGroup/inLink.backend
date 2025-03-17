@@ -71,7 +71,7 @@ public class Security {
                                 "/api/adv/update-status",
                                 "/api/qrcode/create/**",
                                 "/api/qrcode/download/**"
-                        ).hasRole("USER")
+                        ).hasAnyRole("USER","ADMIN")
                         .requestMatchers(
                                 "/api/wallet/deposit",
                                 "/api/admin/getUser/transactions",
@@ -80,7 +80,12 @@ public class Security {
                                 "/api/admin/get-all/adv",
                                 "/api/admin/delete/user/**",
                                 "/api/admin/edit-user/**",
-                                "/api/admin/get-all/users"
+                                "/api/admin/get-all/users",
+                                "/api/admin/get-adv/**",
+                                "/api/admin/edit-adv",
+                                "/api/admin/create-user",
+                                "/api/admin/delete-adv/**",
+                                "/api/admin/get-all-adv"
                         ).hasRole("ADMIN")
                         .requestMatchers("/api/transaction/get/**",
                                 "/api/chat/send",

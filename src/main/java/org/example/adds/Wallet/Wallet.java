@@ -2,6 +2,7 @@ package org.example.adds.Wallet;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.example.adds.Users.Users;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Entity
 @Table
 @Data
+@NoArgsConstructor
 public class Wallet implements Serializable {
     @Id
     @GeneratedValue
@@ -35,4 +37,14 @@ public class Wallet implements Serializable {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    public Wallet(String balanceUuId,
+                  Users user,
+                  BigDecimal balance) {
+        this.balanceUuId = balanceUuId;
+        this.user = user;
+        this.balance = balance;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 }

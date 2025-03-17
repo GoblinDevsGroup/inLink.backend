@@ -61,6 +61,19 @@ public class Users implements Serializable {
         this.updatedAt = updatedAt;
     }
 
+    public Users(String fullName,
+                 String companyName,
+                 String phone,
+                 String password) {
+        this.fullName = fullName;
+        this.companyName = companyName;
+        this.phone = phone;
+        this.password = password;
+        this.userRole = UserRole.ROLE_USER;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
     public Users() {
     }
 }

@@ -26,9 +26,8 @@ import io.swagger.v3.oas.annotations.servers.Server;
         ),
         servers = @Server(
                 description = "Local En",
-                url = "http://localhost:9000"
+                url = "http://51.20.142.143/:9000"
         )
-        //security =
 )
 @SecurityScheme(
         name = "bearerAuth",
@@ -38,7 +37,6 @@ import io.swagger.v3.oas.annotations.servers.Server;
         bearerFormat = "JWT",
         in = SecuritySchemeIn.HEADER
 )
-//@Configuration
 public class SwaggerApiDoc {
 
 }
